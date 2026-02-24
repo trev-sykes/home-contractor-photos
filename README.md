@@ -230,7 +230,7 @@ This project is licensed under the ISC License.
 
 ## 🆘 Support
 
-For support, please contact [your-email@example.com] or create an issue in the repository.
+For support, please contact [trevsykes97@gmail.com] or create an issue in the repository.
 
 ---
 

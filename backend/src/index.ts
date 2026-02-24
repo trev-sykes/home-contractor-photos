@@ -9,11 +9,14 @@ import { handleStripeWebhook } from "./modules/billing/billing.webhooks.js";
 
 const app = express();
 
+const origin = process.env.NODE_ENV === "production"
+    ? process.env.FRONTEND_URL_PROD
+    : process.env.FRONTEND_URL_LOCAL;
+
+if (!origin) throw new Error("Frontend URL not defined in .env");
+
 app.use(cors({
-    origin: [
-        "http://localhost:3000",
-        "https://your-frontend-domain.com"
-    ],
+    origin,
     credentials: true
 }));
 
