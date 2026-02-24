@@ -1,5 +1,9 @@
 import { api } from "./api";
 
+export async function welcome() {
+    const res = await api.get("/api");
+    return res.data;
+}
 export async function register(email: string, password: string, companyName: string) {
     const res = await api.post("/api/register", {
         email,

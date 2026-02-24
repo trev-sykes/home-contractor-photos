@@ -1,13 +1,20 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { welcome } from "@/lib/auth";
 
 export default function Home() {
+  const [welcomeMessage, setWelcome] = useState('');
   const router = useRouter();
 
   useEffect(() => {
+    const getMessage = async () => {
+      const res = await welcome();
+      setWelcome(res);
+    }
+    getMessage();
     const token = localStorage.getItem("token");
     if (token) {
       router.push("/dashboard");
@@ -19,6 +26,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-950 to-zinc-900 text-white">
       {/* Header */}
+      <p>{welcomeMessage}</p>
       <header className="border-b border-zinc-800">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="text-2xl font-bold">
