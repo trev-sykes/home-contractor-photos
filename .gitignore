@@ -19,6 +19,8 @@ Thumbs.db
 **/.env
 **/.env.local
 **/.env.*.local
+**/.env.*.production
+**/.env.production
 
 # Build / Output directories
 **/.next/
@@ -63,3 +65,7 @@ pids/
 *.pid
 *.seed
 *.pid.lock
+
+# Environment variables
+frontend/.env*
+backend/.env*
