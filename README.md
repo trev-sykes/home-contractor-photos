@@ -1,4 +1,4 @@
-# ContractorProof
+# Home Contractor Photos
 
 A modern SaaS platform for home contractors to showcase their work, manage projects, and grow their business through professional photo portfolios.
 
