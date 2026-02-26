@@ -1,37 +1,44 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { welcome } from "@/lib/auth";
-
+import Image from "next/image";
 export default function Home() {
-  const [welcomeMessage, setWelcome] = useState('');
   const router = useRouter();
 
   useEffect(() => {
+    // Optional welcome message fetch (if still needed)
     const getMessage = async () => {
-      const res = await welcome();
-      setWelcome(res);
-    }
+      try {
+        const res = await welcome();
+        console.log(res); // or handle if you want to display it somewhere
+      } catch { }
+    };
     getMessage();
+
     const token = localStorage.getItem("token");
     if (token) {
       router.push("/dashboard");
-    } else {
-      router.push("/");
     }
-  }, []);
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-950 to-zinc-900 text-white">
       {/* Header */}
-      <p>{welcomeMessage}</p>
-      <header className="border-b border-zinc-800">
+      <header className="border-b border-zinc-800 bg-black">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-2xl font-bold">
-            📸 ContractorProof
-          </div>
+
+          {/* Logo + App Name */}
+          <Link href="/dashboard" className="flex items-center gap-3">
+            {/* App Name */}
+            <span className="text-white font-bold text-xl">
+              Home Contractor Photos
+            </span>
+          </Link>
+
+          {/* Auth Links */}
           <div className="flex gap-4">
             <Link
               href="/login"
@@ -41,155 +48,153 @@ export default function Home() {
             </Link>
             <Link
               href="/register"
-              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-semibold transition"
+              className="bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-lg font-semibold transition"
             >
-              Start Free Trial
+              Get Started Free
             </Link>
           </div>
+
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-6 py-20 text-center">
+      < section className="max-w-6xl mx-auto px-6 py-20 md:py-28 text-center" >
         <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-          Show Off Your Work.<br />
-          <span className="text-blue-500">Win More Jobs.</span>
+          Capture Every Job.<br />
+          <span className="text-blue-500">Close More Deals.</span>
         </h1>
 
-        <p className="text-xl text-zinc-400 mb-8 max-w-2xl mx-auto">
-          The simplest way for contractors to organize project photos,
-          create stunning before/after comparisons, and impress customers.
+        <p className="text-xl text-zinc-300 mb-10 max-w-3xl mx-auto">
+          The easiest way for contractors to organize project photos, create powerful before/afters, and prove your work to win bigger jobs.
         </p>
 
-        <div className="flex gap-4 justify-center flex-wrap">
+        <div className="flex gap-5 justify-center flex-wrap">
           <Link
             href="/register"
-            className="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg font-semibold text-lg transition"
+            className="bg-blue-600 hover:bg-blue-700 px-9 py-4 rounded-xl font-semibold text-lg transition shadow-lg shadow-blue-900/30"
           >
             Start Free Trial →
           </Link>
-          <button className="border border-zinc-700 hover:border-zinc-500 px-8 py-4 rounded-lg font-semibold text-lg transition">
+          <button className="border border-zinc-700 hover:border-zinc-500 px-9 py-4 rounded-xl font-semibold text-lg transition">
             Watch Demo
           </button>
         </div>
 
-        <p className="text-zinc-500 mt-4 text-sm">
-          No credit card required • 14-day free trial • Cancel anytime
+        <p className="text-zinc-500 mt-5 text-sm">
+          No credit card needed • 14-day free trial • Cancel anytime
         </p>
 
-        {/* Hero Image / Demo Screenshot */}
-        <div className="mt-16 rounded-xl overflow-hidden border border-zinc-800 shadow-2xl">
-          <div className="bg-gradient-to-br from-zinc-800 to-zinc-900 p-8 aspect-video flex items-center justify-center">
-            {/* Replace with actual screenshot when you have it */}
-            <p className="text-zinc-500 text-xl">App Screenshot Here</p>
-          </div>
+        {/* Hero placeholder — dashboard screenshot */}
+        <div className="mt-16 rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl shadow-black/50 relative w-full h-64 md:h-96 bg-gradient-to-br from-zinc-800 to-zinc-950">
+          <Image
+            src="/dashboard.png"
+            alt="Dashboard"
+            fill
+            className="object-contain"
+            priority
+          />
         </div>
-      </section>
+      </section >
 
       {/* Problem Section */}
-      <section className="bg-zinc-900 border-y border-zinc-800 py-20">
+      < section className="bg-zinc-900 border-y border-zinc-800 py-20" >
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Tired of Losing Jobs Because You Can't Show Your Work?
+          <h2 className="text-4xl font-bold text-center mb-14">
+            Tired of Photos Holding You Back?
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-zinc-800 p-6 rounded-lg border border-zinc-700">
-              <div className="text-4xl mb-4">📱</div>
-              <h3 className="text-xl font-semibold mb-2">Photos Are a Mess</h3>
+            <div className="bg-zinc-800/70 p-7 rounded-xl border border-zinc-700 backdrop-blur-sm">
+              <div className="text-5xl mb-5">📱</div>
+              <h3 className="text-2xl font-semibold mb-3">Chaotic Photo Mess</h3>
               <p className="text-zinc-400">
-                Hundreds of photos scattered across your camera roll.
-                Can't find that kitchen remodel from last month.
+                Thousands of photos buried in your camera roll. Can't quickly find that perfect bathroom remodel from 6 months ago.
               </p>
             </div>
 
-            <div className="bg-zinc-800 p-6 rounded-lg border border-zinc-700">
-              <div className="text-4xl mb-4">🎨</div>
-              <h3 className="text-xl font-semibold mb-2">No Portfolio</h3>
+            <div className="bg-zinc-800/70 p-7 rounded-xl border border-zinc-700 backdrop-blur-sm">
+              <div className="text-5xl mb-5">🏠</div>
+              <h3 className="text-2xl font-semibold mb-3">No Professional Proof</h3>
               <p className="text-zinc-400">
-                Customers ask "Can I see your work?" and you scramble
-                to find photos. Lost jobs because you couldn't show proof.
+                Prospects ask to see your work — you fumble through albums and lose the sale.
               </p>
             </div>
 
-            <div className="bg-zinc-800 p-6 rounded-lg border border-zinc-700">
-              <div className="text-4xl mb-4">⏰</div>
-              <h3 className="text-xl font-semibold mb-2">Wasted Time</h3>
+            <div className="bg-zinc-800/70 p-7 rounded-xl border border-zinc-700 backdrop-blur-sm">
+              <div className="text-5xl mb-5">⏳</div>
+              <h3 className="text-2xl font-semibold mb-3">Wasted Hours</h3>
               <p className="text-zinc-400">
-                Spend hours organizing photos, making before/afters in
-                photo editors. Time you could spend on actual jobs.
+                Spending evenings in editing apps to make before/afters instead of bidding new jobs.
               </p>
             </div>
           </div>
         </div>
-      </section>
+      </section >
 
-      {/* Solution / Features Section */}
-      <section className="py-20">
+      {/* Features Section */}
+      < section className="py-24" >
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-4">
-            Simple Photo Management Built for Contractors
+          <h2 className="text-4xl font-bold text-center mb-6">
+            Built for Contractors — Simple & Powerful
           </h2>
-          <p className="text-zinc-400 text-center mb-16 max-w-2xl mx-auto">
-            No complicated software. No bloat. Just the features you actually need.
+          <p className="text-zinc-400 text-center mb-16 max-w-3xl mx-auto text-lg">
+            No learning curve. No unnecessary features. Just the tools to organize photos and impress clients fast.
           </p>
 
-          <div className="space-y-16">
+          <div className="space-y-20">
             {/* Feature 1 */}
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="text-2xl font-bold mb-4">
-                  📸 Auto-Organized by Customer & Date
+                <h3 className="text-3xl font-bold mb-5">
+                  📸 Smart Organization — Zero Effort
                 </h3>
-                <p className="text-zinc-400 mb-4">
-                  Take photos during the job. We automatically organize them
-                  by customer name and project date. No manual sorting needed.
+                <p className="text-zinc-300 mb-6 text-lg">
+                  Snap photos on-site. We sort them automatically by job, customer, and date.
                 </p>
-                <ul className="space-y-2 text-zinc-300">
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    <span>Upload from phone in seconds</span>
+                <ul className="space-y-3 text-zinc-200 text-base">
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    Instant mobile uploads
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    <span>Search by customer or date</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    Search by client name or month
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    <span>Never lose a photo again</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    Photos never get lost again
                   </li>
                 </ul>
               </div>
-              <div className="bg-zinc-800 rounded-lg p-8 border border-zinc-700 aspect-video flex items-center justify-center">
-                <p className="text-zinc-500">Feature Screenshot</p>
+              <div className="bg-zinc-800 rounded-2xl p-10 border border-zinc-700 aspect-video flex items-center justify-center">
+                <p className="text-zinc-500 text-xl">Organization Dashboard Screenshot</p>
               </div>
             </div>
 
             {/* Feature 2 */}
             <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="order-2 md:order-1 bg-zinc-800 rounded-lg p-8 border border-zinc-700 aspect-video flex items-center justify-center">
-                <p className="text-zinc-500">Before/After Example</p>
+              <div className="order-2 md:order-1 bg-zinc-800 rounded-2xl p-10 border border-zinc-700 aspect-video flex items-center justify-center">
+                <p className="text-zinc-500 text-xl">Before/After Slider Example</p>
               </div>
               <div className="order-1 md:order-2">
-                <h3 className="text-2xl font-bold mb-4">
-                  🎨 One-Click Before/After Comparisons
+                <h3 className="text-3xl font-bold mb-5">
+                  🎨 Instant Before/After Magic
                 </h3>
-                <p className="text-zinc-400 mb-4">
-                  Create professional before/after comparisons instantly.
-                  Perfect for showing customers and posting on social media.
+                <p className="text-zinc-300 mb-6 text-lg">
+                  Turn raw photos into client-winning comparisons in one click.
                 </p>
-                <ul className="space-y-2 text-zinc-300">
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    <span>Side-by-side or slider view</span>
+                <ul className="space-y-3 text-zinc-200 text-base">
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    Side-by-side or interactive slider
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    <span>Auto-watermark with your logo</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    Auto-add your logo watermark
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    <span>Download for Instagram/Facebook</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    Ready for social media & proposals
                   </li>
                 </ul>
               </div>
@@ -198,178 +203,117 @@ export default function Home() {
             {/* Feature 3 */}
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="text-2xl font-bold mb-4">
-                  📤 Share Progress with Customers
+                <h3 className="text-3xl font-bold mb-5">
+                  📲 Real-Time Progress Sharing
                 </h3>
-                <p className="text-zinc-400 mb-4">
-                  Send customers a link to see real-time progress.
-                  Builds trust and keeps them in the loop.
+                <p className="text-zinc-300 mb-6 text-lg">
+                  Send clients a private link — they see updates as you upload.
                 </p>
-                <ul className="space-y-2 text-zinc-300">
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    <span>One-click share links</span>
+                <ul className="space-y-3 text-zinc-200 text-base">
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    One-tap shareable links
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    <span>No customer login required</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    No login needed for clients
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    <span>Automatic updates as you add photos</span>
+                  <li className="flex items-start gap-3">
+                    <span className="text-green-500 text-xl mt-0.5">✓</span>
+                    Builds trust & reduces calls
                   </li>
                 </ul>
               </div>
-              <div className="bg-zinc-800 rounded-lg p-8 border border-zinc-700 aspect-video flex items-center justify-center">
-                <p className="text-zinc-500">Share Link Preview</p>
+              <div className="bg-zinc-800 rounded-2xl p-10 border border-zinc-700 aspect-video flex items-center justify-center">
+                <p className="text-zinc-500 text-xl">Client Share Link Preview</p>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </section >
 
-      {/* Benefits Section */}
-      <section className="bg-zinc-900 border-y border-zinc-800 py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Why Contractors Love ContractorProof
-          </h2>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="text-4xl mb-4">💼</div>
-              <h3 className="font-semibold mb-2">Win More Jobs</h3>
-              <p className="text-zinc-400 text-sm">
-                Show off your best work when quoting new jobs
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="text-4xl mb-4">⚡</div>
-              <h3 className="font-semibold mb-2">Save Time</h3>
-              <p className="text-zinc-400 text-sm">
-                Stop wasting hours organizing photos manually
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="text-4xl mb-4">😊</div>
-              <h3 className="font-semibold mb-2">Happy Customers</h3>
-              <p className="text-zinc-400 text-sm">
-                Keep customers updated with progress photos
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="text-4xl mb-4">📱</div>
-              <h3 className="font-semibold mb-2">Marketing Ready</h3>
-              <p className="text-zinc-400 text-sm">
-                Get professional content for social media
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section className="py-20">
+      {/* CTA / Pricing Section (simplified & punchier) */}
+      < section className="py-24 bg-gradient-to-b from-zinc-900 to-zinc-950" >
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            Simple, Honest Pricing
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Get Organized. Win More.
           </h2>
-          <p className="text-zinc-400 mb-12">
-            No hidden fees. No per-photo charges. Just one simple price.
+          <p className="text-xl text-zinc-300 mb-10">
+            One straightforward plan — unlimited everything.
           </p>
 
-          <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-8 md:p-12 border border-blue-500">
-            <h3 className="text-2xl font-bold mb-2">Pro Plan</h3>
-            <div className="mb-6">
-              <span className="text-5xl font-bold">$15</span>
-              <span className="text-xl text-blue-200">/month</span>
+          <div className="bg-gradient-to-br from-blue-700 to-blue-900 rounded-3xl p-10 md:p-14 border border-blue-600/40 shadow-2xl shadow-blue-950/40">
+            <h3 className="text-3xl font-bold mb-4">Pro Plan</h3>
+            <div className="mb-8">
+              <span className="text-6xl font-extrabold">$15</span>
+              <span className="text-2xl text-blue-200"> / month</span>
             </div>
 
-            <ul className="text-left space-y-3 mb-8 max-w-sm mx-auto">
-              <li className="flex items-start gap-2">
-                <span className="text-green-300 mt-1">✓</span>
-                <span>Unlimited photos & projects</span>
+            <ul className="text-left space-y-4 mb-10 max-w-md mx-auto text-lg">
+              <li className="flex items-center gap-3">
+                <span className="text-green-400 text-2xl">✓</span>
+                Unlimited photos & projects
               </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-300 mt-1">✓</span>
-                <span>Unlimited before/after comparisons</span>
+              <li className="flex items-center gap-3">
+                <span className="text-green-400 text-2xl">✓</span>
+                Unlimited before/afters
               </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-300 mt-1">✓</span>
-                <span>Auto-watermark with your logo</span>
+              <li className="flex items-center gap-3">
+                <span className="text-green-400 text-2xl">✓</span>
+                Your logo auto-watermarked
               </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-300 mt-1">✓</span>
-                <span>Customer sharing links</span>
+              <li className="flex items-center gap-3">
+                <span className="text-green-400 text-2xl">✓</span>
+                Client progress sharing links
               </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-300 mt-1">✓</span>
-                <span>Mobile app (iOS & Android)</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-300 mt-1">✓</span>
-                <span>Cancel anytime</span>
+              <li className="flex items-center gap-3">
+                <span className="text-green-400 text-2xl">✓</span>
+                iOS + Android mobile access
               </li>
             </ul>
 
             <Link
               href="/register"
-              className="bg-white text-blue-600 hover:bg-zinc-100 px-8 py-4 rounded-lg font-bold text-lg inline-block transition"
+              className="bg-white text-blue-900 hover:bg-blue-50 px-10 py-5 rounded-xl font-bold text-xl inline-block transition shadow-lg"
             >
               Start 14-Day Free Trial
             </Link>
-            <p className="text-blue-200 mt-4 text-sm">
-              No credit card required
+            <p className="text-blue-200 mt-5 text-base">
+              No card required • Cancel anytime
             </p>
           </div>
         </div>
-      </section>
-
-      {/* Social Proof / Testimonials (add later when you have customers) */}
-      <section className="bg-zinc-900 border-y border-zinc-800 py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Built for Orange County Contractors
-          </h2>
-          <p className="text-zinc-400 text-center max-w-2xl mx-auto">
-            We're local to Aliso Viejo and understand what OC contractors need.
-            No bloated enterprise software. Just simple tools that work.
-          </p>
-        </div>
-      </section>
+      </section >
 
       {/* Final CTA */}
-      <section className="py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold mb-6">
-            Ready to Show Off Your Work?
+      < section className="py-20 text-center" >
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-5xl font-bold mb-6">
+            Ready to Level Up Your Bids?
           </h2>
-          <p className="text-xl text-zinc-400 mb-8">
-            Join contractors who are winning more jobs with professional photo portfolios.
+          <p className="text-xl text-zinc-300 mb-10">
+            Join contractors who turn photos into profit.
           </p>
           <Link
             href="/register"
-            className="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg font-semibold text-lg inline-block transition"
+            className="bg-blue-600 hover:bg-blue-700 px-10 py-5 rounded-xl font-bold text-xl inline-block transition shadow-lg shadow-blue-900/30"
           >
-            Start Free Trial →
+            Get Started Free →
           </Link>
-          <p className="text-zinc-500 mt-4">
-            14 days free • No credit card required
+          <p className="text-zinc-500 mt-6">
+            14 days free • No credit card needed
           </p>
         </div>
-      </section>
+      </section >
 
       {/* Footer */}
-      <footer className="border-t border-zinc-800 py-12">
+      < footer className="border-t border-zinc-800 py-16" >
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-4 gap-10">
             <div>
-              <div className="text-xl font-bold mb-4">📸 ContractorProof</div>
+              <div className="text-2xl font-bold mb-4">Home Contractor Photos</div>
               <p className="text-zinc-400 text-sm">
-                Photo management built for contractors in Orange County.
+                Simple photo tools built for contractors.
               </p>
             </div>
 
@@ -378,7 +322,7 @@ export default function Home() {
               <ul className="space-y-2 text-zinc-400 text-sm">
                 <li><Link href="#" className="hover:text-white">Features</Link></li>
                 <li><Link href="#" className="hover:text-white">Pricing</Link></li>
-                <li><Link href="#" className="hover:text-white">FAQ</Link></li>
+                <li><Link href="#" className="hover:text-white">Demo</Link></li>
               </ul>
             </div>
 
@@ -387,25 +331,23 @@ export default function Home() {
               <ul className="space-y-2 text-zinc-400 text-sm">
                 <li><Link href="#" className="hover:text-white">About</Link></li>
                 <li><Link href="#" className="hover:text-white">Contact</Link></li>
-                <li><Link href="#" className="hover:text-white">Blog</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-zinc-400 text-sm">
-                <li><Link href="#" className="hover:text-white">Privacy</Link></li>
-                <li><Link href="#" className="hover:text-white">Terms</Link></li>
+                <li><Link href="#" className="hover:text-white">Privacy Policy</Link></li>
+                <li><Link href="#" className="hover:text-white">Terms of Service</Link></li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-zinc-800 mt-12 pt-8 text-center text-zinc-500 text-sm">
-            © 2026 ContractorProof. Made in Aliso Viejo, CA.
+            © {new Date().getFullYear()} Home Contractor Photos. All rights reserved.
           </div>
         </div>
-      </footer>
-    </div>
-  )
-    ;
+      </footer >
+    </div >
+  );
 }
