@@ -3,10 +3,6 @@ import type { Request, Response, NextFunction } from "express";
 
 const JWT_SECRET = process.env.JWT_SECRET || 'superkey';
 
-export interface AuthRequest extends Request {
-    userId: string;
-}
-
 export function requireAuth(
     req: Request,
     res: Response,
@@ -23,7 +19,7 @@ export function requireAuth(
         const payload = jwt.verify(token, JWT_SECRET) as { userId: string };
 
         // Cast request
-        (req as AuthRequest).userId = payload.userId;
+        req.userId = payload.userId;
 
         next();
     } catch {

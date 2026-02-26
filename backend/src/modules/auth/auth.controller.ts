@@ -1,10 +1,11 @@
 import type { Request, Response } from "express";
-import { type AuthRequest } from "../../middleware/auth.js";
 import { me, login, register } from "./auth.service.js";
 
 export const meController = async (req: Request, res: Response) => {
-    const authReq = req as AuthRequest;
-    const user = await me(authReq.userId);
+    if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+    const user = await me(req.userId);
     if (!user) {
         return res.status(404).json({ error: "User not found" });
     }

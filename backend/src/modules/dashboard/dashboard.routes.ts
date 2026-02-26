@@ -7,4 +7,4 @@ const dashboardRoutes = Router();
 
 dashboardRoutes.get("/dashboard", requireAuth, requireSubscription, dashboardController.getDashboardController);
 
-export default dashboardRoutes;
+export default dashboardRoutes; 

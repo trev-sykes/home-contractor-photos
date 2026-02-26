@@ -1,11 +1,13 @@
 import type { Request, Response } from "express";
-import type { AuthRequest } from "../../middleware/auth.js";
 import { getProjects } from "./projects.service.js";
 
 export const getProjectsController = async (req: Request, res: Response) => {
-    const authReq = req as AuthRequest;
+    if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+
     try {
-        const projects = await getProjects(authReq.userId);
+        const projects = await getProjects(req.userId);
         res.json({ projects });
     } catch (err: any) {
         console.error(err);

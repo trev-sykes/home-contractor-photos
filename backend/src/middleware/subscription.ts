@@ -1,13 +1,15 @@
 // middleware/subscription.ts
 import { prisma } from "../config/prisma.js";
 import type { Request, Response, NextFunction } from "express";
-import { requireAuth, type AuthRequest } from "./auth.js";
 
 export const requireSubscription = async (
-    req: AuthRequest,
+    req: Request,
     res: Response,
     next: NextFunction
 ) => {
+    if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
 
     const user = await prisma.user.findUnique({
         where: { id: req.userId },
