@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { welcome } from "@/lib/auth";
 import Image from "next/image";
+import BeforeAfterSlider from "./components/sliders/BeforeAfterSlider";
 export default function Home() {
   const router = useRouter();
 
@@ -173,8 +174,13 @@ export default function Home() {
 
             {/* Feature 2 */}
             <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="order-2 md:order-1 bg-zinc-800 rounded-2xl p-10 border border-zinc-700 aspect-video flex items-center justify-center">
-                <p className="text-zinc-500 text-xl">Before/After Slider Example</p>
+              <div className="order-2 md:order-1 rounded-2xl overflow-hidden border border-zinc-700 aspect-video">
+                <BeforeAfterSlider
+                  before="/before.png"
+                  after="/after.png"
+                  width="100%"
+                  height="100%"
+                />
               </div>
               <div className="order-1 md:order-2">
                 <h3 className="text-3xl font-bold mb-5">

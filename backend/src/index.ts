@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./modules/auth/auth.routes.js";
+import customersRoutes from "./modules/customers/customers.routes.js";
 import projectsRoutes from "./modules/projects/projects.routes.js";
 import dashboardRoutes from "./modules/dashboard/dashboard.routes.js";
 import billingRoutes from "./modules/billing/billing.routes.js";
@@ -30,6 +31,7 @@ app.use(express.json());
 
 
 app.use("/api", authRoutes);
+app.use("/api", customersRoutes);
 app.use("/api", projectsRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", billingRoutes);

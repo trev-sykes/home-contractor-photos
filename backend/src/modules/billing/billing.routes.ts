@@ -5,6 +5,7 @@ import * as billingController from "./billing.controller.js";
 const billingRoutes = Router();
 
 billingRoutes.post("/free-trial", requireAuth, billingController.startFreeTrialController);
+billingRoutes.post("/create-checkout-session", requireAuth, billingController.createCheckoutSessionController);
 billingRoutes.post("/portal", requireAuth, billingController.portalController);
 
 

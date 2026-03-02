@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { FaUser, FaBuilding, FaCalendarCheck, FaCreditCard } from "react-icons/fa";
+import UpgradeButton from "@/app/components/buttons/UpgradeButton";
 
 export default function DashboardPage() {
     const [user, setUser] = useState<any>(null);
@@ -73,7 +74,7 @@ export default function DashboardPage() {
                                 Start Free Trial
                             </button>
                         )}
-
+                        <UpgradeButton />
                         <button
                             className="mt-2 bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-800 transition"
                             onClick={async () => {
