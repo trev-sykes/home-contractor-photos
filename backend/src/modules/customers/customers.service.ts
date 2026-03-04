@@ -13,7 +13,27 @@ export const fetchCustomers = async (userId: string) => {
         },
     });
 };
-
+export const fetchCustomerById = async (userId: string, customerId: string) => {
+    return await prisma.customer.findFirst({
+        where: { id: customerId, userId },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            projects: {
+                orderBy: { createdAt: "desc" },
+                select: {
+                    id: true,
+                    name: true,
+                    address: true,
+                    createdAt: true,
+                    _count: { select: { photos: true } },
+                },
+            },
+        },
+    });
+};
 export const addCustomer = async (
     userId: string,
     data: { name: string; email?: string; phone?: string }

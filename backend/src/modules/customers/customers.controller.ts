@@ -1,12 +1,25 @@
 import type { Request, Response } from "express";
-import { fetchCustomers, addCustomer } from "./customers.service.js";
+import { fetchCustomers, addCustomer, fetchCustomerById } from "./customers.service.js";
 
 export const getCustomers = async (req: Request, res: Response) => {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
     const customers = await fetchCustomers(req.userId);
     res.json(customers);
 };
+export const getCustomerById = async (req: Request<any>, res: Response) => {
+    if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
 
+    const customer = await fetchCustomerById(
+        req.userId,
+        req.params.customerId
+    );
+
+    if (!customer) {
+        return res.status(404).json({ error: "Customer not found" });
+    }
+
+    res.json(customer);
+};
 export const createCustomer = async (req: Request, res: Response) => {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
     const { name, email, phone } = req.body;

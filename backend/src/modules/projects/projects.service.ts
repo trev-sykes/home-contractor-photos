@@ -1,17 +1,61 @@
 import { prisma } from "../../config/prisma.js";
 
-export const getProjects = async (userId: string) => {
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: {
-            customers: {
-                include: {
-                    projects: true,
-                },
-            },
+// Guard: ensure the customer belongs to this user
+const ownedCustomer = (userId: string, customerId: string) =>
+    prisma.customer.findFirst({ where: { id: customerId, userId } });
+
+export const fetchProjects = async (userId: string, customerId: string) => {
+    if (!await ownedCustomer(userId, customerId)) return null;
+    return await prisma.project.findMany({
+        where: { customerId },
+        orderBy: { createdAt: "desc" },
+        select: {
+            id: true,
+            name: true,
+            address: true,
+            createdAt: true,
+            _count: { select: { photos: true } },
         },
     });
-    if (!user) throw new Error();
+};
 
-    return user.customers.flatMap(c => c.projects) || [];
-}
+export const fetchProject = async (userId: string, customerId: string, projectId: string) => {
+    if (!await ownedCustomer(userId, customerId)) return null;
+    return await prisma.project.findFirst({
+        where: { id: projectId, customerId },
+        include: {
+            photos: { orderBy: { createdAt: "desc" } },
+        },
+    });
+};
+
+export const addProject = async (
+    userId: string,
+    customerId: string,
+    data: { name: string; address?: string }
+) => {
+    if (!await ownedCustomer(userId, customerId)) return null;
+    return await prisma.project.create({
+        data: { ...data, customerId },
+    });
+};
+
+export const updateProject = async (
+    userId: string,
+    customerId: string,
+    projectId: string,
+    data: { name: string; address?: string }
+) => {
+    if (!await ownedCustomer(userId, customerId)) return null;
+    return await prisma.project.updateMany({
+        where: { id: projectId, customerId },
+        data,
+    });
+};
+
+export const deleteProject = async (userId: string, customerId: string, projectId: string) => {
+    if (!await ownedCustomer(userId, customerId)) return null;
+    return await prisma.project.deleteMany({
+        where: { id: projectId, customerId },
+    });
+};
