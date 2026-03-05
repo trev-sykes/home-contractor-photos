@@ -8,6 +8,7 @@ function requiredEnv(name: string): string {
     }
     return value;
 }
+
 const NODE_ENV = process.env.NODE_ENV ?? "development";
 
 export const env = Object.freeze({
@@ -15,19 +16,23 @@ export const env = Object.freeze({
     PORT: process.env.PORT || 4001,
     JWT_SECRET: requiredEnv("JWT_SECRET"),
     DATABASE_URL: requiredEnv("DATABASE_URL"),
-    STRIPE: {
-        STRIPE_SECRET_KEY: requiredEnv("STRIPE_SECRET_KEY"),
-        STRIPE_PRICE_ID: requiredEnv("STRIPE_PRICE_ID"),
-        STRIPE_WEBHOOK_SECRET: requiredEnv("STRIPE_WEBHOOK_SECRET")
+    get STRIPE() {
+        return {
+            STRIPE_SECRET_KEY: requiredEnv("STRIPE_SECRET_KEY"),
+            STRIPE_PRICE_ID: requiredEnv("STRIPE_PRICE_ID"),
+            STRIPE_WEBHOOK_SECRET: requiredEnv("STRIPE_WEBHOOK_SECRET"),
+        };
     },
-    CLOUDINARY: {
-        CLOUD_NAME: requiredEnv("CLOUDINARY_CLOUD_NAME"),
-        API_KEY: requiredEnv("CLOUDINARY_API_KEY"),
-        API_SECRET: requiredEnv("CLOUDINARY_API_SECRET"),
+    get CLOUDINARY() {
+        return {
+            CLOUD_NAME: requiredEnv("CLOUDINARY_CLOUD_NAME"),
+            API_KEY: requiredEnv("CLOUDINARY_API_KEY"),
+            API_SECRET: requiredEnv("CLOUDINARY_API_SECRET"),
+        };
     },
-
-    FRONTEND_URL:
-        process.env.NODE_ENV === "production"
+    get FRONTEND_URL() {
+        return process.env.NODE_ENV === "production"
             ? requiredEnv("FRONTEND_URL_PROD")
-            : requiredEnv("FRONTEND_URL_LOCAL"),
-})
+            : requiredEnv("FRONTEND_URL_LOCAL");
+    },
+});
