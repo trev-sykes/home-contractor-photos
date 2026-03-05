@@ -12,6 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://home-contractor-photos.com"),
   title: "Home Contractor Photos",
   description:
     "Easily manage and share before/after project photos for home contractors in Orange County. Auto-organized, watermarked, and ready to impress customers.",
@@ -28,8 +29,6 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Home Contractor Photos", url: "https://home-contractor-photos.com" }],
   creator: "Home Contractor Photos Team",
-  themeColor: "#000000",
-  viewport: "width=device-width, initial-scale=1",
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",

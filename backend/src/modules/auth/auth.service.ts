@@ -1,14 +1,8 @@
-import dotenv from "dotenv";
+import { env } from "../../config/env.js";
 import { prisma } from "../../config/prisma.js";
 import { stripe } from "../../config/stripe.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
-if (!process.env.JWT_SECRET) {
-    throw new Error("JWT_SECRET is not defined");
-}
-
-const JWT_SECRET = process.env.JWT_SECRET;
 
 export const me = async (userId: string) => {
 
@@ -42,7 +36,7 @@ export const login = async (email: string, password: string) => {
 
     const token = jwt.sign(
         { userId: user.id },
-        JWT_SECRET,
+        env.JWT_SECRET,
         { expiresIn: "7d" }
     );
 

@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import { env } from "./env.js";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";  // Change this import based on your DB
 import { Pool } from "pg";          // Only for PostgreSQL
@@ -8,7 +8,7 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 // For PostgreSQL (most common case)
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ connectionString: env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 
 // If using MySQL instead:
@@ -24,4 +24,6 @@ export const prisma =
         log: ["query"],
     });
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (env.NODE_ENV !== "production") {
+    globalForPrisma.prisma = prisma;
+}

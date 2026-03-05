@@ -19,7 +19,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 {/* Logo */}
                 <Link href="/dashboard" className="flex items-center gap--10">
                     <div className="relative w-30 h-30">
-                        <Image src="/logod.png" alt="Logo" fill className="object-contain" />
+                        <Image
+                            src="/logo.png"
+                            alt="Logo"
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-contain"
+                        />
                     </div>
                     <h2 className="text-m font-bold">Home Contractor</h2>
                 </Link>

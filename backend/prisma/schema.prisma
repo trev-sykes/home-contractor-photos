@@ -39,6 +39,7 @@ model Project {
   id         String   @id @default(cuid())
   name       String
   address    String?
+  shareToken String?  @unique @default(cuid())
   createdAt  DateTime @default(now())
   customer   Customer @relation(fields: [customerId], references: [id])
   customerId String

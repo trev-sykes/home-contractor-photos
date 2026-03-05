@@ -1,3 +1,4 @@
+import { env } from "../../config/env.js";
 import type { Request, Response } from "express";
 import { stripe } from "../../config/stripe.js";
 import { prisma } from "../../config/prisma.js";
@@ -18,7 +19,7 @@ export const handleStripeWebhook = async (
         event = stripe.webhooks.constructEvent(
             req.body,
             sig,
-            process.env.STRIPE_WEBHOOK_SECRET!
+            env.STRIPE.STRIPE_WEBHOOK_SECRET!
         );
     } catch (err) {
         console.error("Webhook signature verification failed.");

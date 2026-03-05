@@ -1,6 +1,6 @@
 import { prisma } from "../../config/prisma.js";
 import { stripe } from "../../config/stripe.js";
-import { STRIPE_PRICE_ID, FRONTEND_URL } from "../../config/config.js"; // use JWT_SECRET safely
+import { env } from "../../config/env.js";
 export const startFreeTrial = async (userId: string) => {
     const trialEnds = new Date();
     trialEnds.setDate(trialEnds.getDate() + 14);
@@ -48,12 +48,12 @@ export const createcheckoutSession = async (userId: string) => {
         customer: customerId,
         line_items: [
             {
-                price: STRIPE_PRICE_ID!, // your recurring price ID
+                price: env.STRIPE_PRICE_ID!, // your recurring price ID
                 quantity: 1,
             },
         ],
-        success_url: `${FRONTEND_URL}/dashboard?success=true`,
-        cancel_url: `${FRONTEND_URL}/pricing?canceled=true`,
+        success_url: `${env.FRONTEND_URL}/dashboard?success=true`,
+        cancel_url: `${env.FRONTEND_URL}/pricing?canceled=true`,
     });
     return session
 
@@ -66,7 +66,7 @@ export const openPortal = async (userId: string) => {
 
     const session = await stripe.billingPortal.sessions.create({
         customer: user.stripeCustomerId,
-        return_url: process.env.FRONTEND_URL + "/dashboard",
+        return_url: env.FRONTEND_URL + "/dashboard",
     });
     return session;
 }

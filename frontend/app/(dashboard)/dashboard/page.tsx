@@ -10,8 +10,6 @@ export default function DashboardPage() {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        console.log("Token from localStorage:", token);
-
         api.get("/api/me")
             .then((res) => setUser(res.data))
             .catch((err) => console.error("API /me error:", err.response?.data || err));

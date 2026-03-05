@@ -1,0 +1,21 @@
+import { Router } from "express";
+import { requireAuth } from "../../middleware/auth.js";
+import { upload } from "../../middleware/upload.js";
+import * as photosController from "./photos.controller.js";
+
+const photosRoutes = Router();
+
+photosRoutes.post(
+    "/customers/:customerId/projects/:projectId/photos",
+    requireAuth,
+    upload.single("photo"),
+    photosController.uploadPhotoController
+);
+
+photosRoutes.delete(
+    "/customers/:customerId/projects/:projectId/photos/:photoId",
+    requireAuth,
+    photosController.deletePhotoController
+);
+
+export default photosRoutes;
