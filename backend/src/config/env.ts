@@ -14,7 +14,6 @@ export const env = Object.freeze({
     NODE_ENV,
     PORT: process.env.PORT || 4001,
     JWT_SECRET: requiredEnv("JWT_SECRET"),
-    STRIPE_PRICE_ID: requiredEnv("STRIPE_PRICE_ID"),
     DATABASE_URL: requiredEnv("DATABASE_URL"),
     STRIPE: {
         STRIPE_SECRET_KEY: requiredEnv("STRIPE_SECRET_KEY"),
