@@ -1,6 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+import { createRequire } from "module";
+import type { Request } from "express";
+
+const require = createRequire(import.meta.url);
 const multer = require("multer");
-import type { Request, Response, NextFunction } from "express";
 
 export const upload = multer({
     storage: multer.memoryStorage(),
