@@ -48,7 +48,7 @@ export const createcheckoutSession = async (userId: string) => {
         customer: customerId,
         line_items: [
             {
-                price: env.STRIPE_PRICE_ID!, // your recurring price ID
+                price: env.STRIPE.STRIPE_PRICE_ID!, // your recurring price ID
                 quantity: 1,
             },
         ],

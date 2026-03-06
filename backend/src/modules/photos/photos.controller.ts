@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
-import { uploadPhoto, deletePhoto } from "./photos.service.js";
 
-export const uploadPhotoController = async (req: Request, res: Response) => {
+import { uploadPhoto, deletePhoto } from "./photos.service.js";
+type MulterRequest = Request & { file?: Express.Multer.File };
+export const uploadPhotoController = async (req: MulterRequest, res: Response) => {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
     if (!req.file) return res.status(400).json({ error: "No file provided" });
 

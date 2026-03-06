@@ -1,5 +1,6 @@
 import { prisma } from "../../config/prisma.js";
 import { cloudinary } from "../../config/cloudinary.js";
+import "multer";
 
 const ownedProject = async (userId: string, customerId: string, projectId: string) => {
     const customer = await prisma.customer.findFirst({ where: { id: customerId, userId } });
