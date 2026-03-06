@@ -1,11 +1,11 @@
-import multer, { type FileFilterCallback } from "multer";
-import type { Request } from "express";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const multer = require("multer");
+import type { Request, Response, NextFunction } from "express";
 
-// Store in memory so we can stream directly to Cloudinary
 export const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
-    fileFilter: (_: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
+    limits: { fileSize: 10 * 1024 * 1024 },
+    fileFilter: (_: Request, file: any, cb: any) => {
         if (file.mimetype.startsWith("image/")) cb(null, true);
         else cb(new Error("Only image files are allowed"));
     },
