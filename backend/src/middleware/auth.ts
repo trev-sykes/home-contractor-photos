@@ -18,7 +18,7 @@ export function requireAuth(
     }
 
     try {
-        const token = auth.split(" ")[1];
+        const token = auth.split(" ")[1]; //
         if (!token) {
             console.log("Token is missing after splitting header:", auth);
             return res.status(401).json({ error: "Invalid token format" });
