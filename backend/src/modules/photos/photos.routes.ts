@@ -17,5 +17,5 @@ photosRoutes.delete(
     requireAuth,
     photosController.deletePhotoController
 );
-
+photosRoutes.get("/photos", requireAuth, photosController.getAllPhotosController);
 export default photosRoutes;

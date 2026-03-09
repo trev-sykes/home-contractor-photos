@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import Link from "next/link";
+import { FaFolder, FaMapMarkerAlt } from "react-icons/fa";
 
 export default function NewProjectPage() {
     const { id } = useParams<{ id: string }>();
@@ -26,60 +27,90 @@ export default function NewProjectPage() {
         }
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") handleSubmit();
+    };
+
     return (
-        <div className="min-h-screen bg-gray-100 p-8">
-            <div className="max-w-lg mx-auto">
-                <div className="mb-6">
-                    <Link href={`/customers/${id}`} className="text-blue-600 hover:text-blue-800 text-sm">
-                        ← Back to Customer
-                    </Link>
+        <div className="page">
+            <div className="max-w-lg mx-auto space-y-6">
+
+                {/* Back */}
+                <Link
+                    href={`/customers/${id}`}
+                    className="inline-flex items-center gap-2 text-sm font-medium transition hover:opacity-70"
+                    style={{ color: "var(--color-text-faint)" }}
+                >
+                    ← Back to Customer
+                </Link>
+
+                {/* Header */}
+                <div>
+                    <p className="section-eyebrow">New</p>
+                    <h1 className="font-display text-4xl font-extrabold text-slate-900">
+                        Create Project
+                    </h1>
+                    <p className="text-slate-500 text-sm mt-1">
+                        Add a project to start uploading before &amp; after photos.
+                    </p>
                 </div>
 
-                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
-                    <h1 className="text-2xl font-bold mb-6">New Project</h1>
+                {/* Form Card */}
+                <div className="card card-body space-y-5">
 
-                    {error && (
-                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-5 text-sm">
-                            {error}
-                        </div>
-                    )}
+                    {error && <div className="alert-error">{error}</div>}
 
-                    <div className="space-y-5">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Project Name <span className="text-red-500">*</span>
-                            </label>
+                    <div>
+                        <label className="input-label">
+                            Project Name <span style={{ color: "var(--color-danger)" }}>*</span>
+                        </label>
+                        <div className="relative">
+                            <FaFolder
+                                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs"
+                                style={{ color: "#94a3b8" }}
+                            />
                             <input
                                 type="text"
                                 placeholder="Kitchen Remodel"
                                 value={form.name}
                                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onKeyDown={handleKeyDown}
+                                className="input pl-9"
                             />
                         </div>
+                    </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Address
-                            </label>
+                    <div>
+                        <label className="input-label">Address</label>
+                        <div className="relative">
+                            <FaMapMarkerAlt
+                                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs"
+                                style={{ color: "#94a3b8" }}
+                            />
                             <input
                                 type="text"
                                 placeholder="123 Main St, Springfield"
                                 value={form.address}
                                 onChange={(e) => setForm({ ...form, address: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onKeyDown={handleKeyDown}
+                                className="input pl-9"
                             />
                         </div>
+                    </div>
 
+                    <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "0.5rem" }}>
                         <button
                             onClick={handleSubmit}
-                            disabled={loading}
-                            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 rounded-xl font-semibold transition"
+                            disabled={loading || !form.name.trim()}
+                            className="btn-primary w-full"
+                            style={{ padding: "0.875rem" }}
                         >
-                            {loading ? "Creating..." : "Create Project"}
+                            {loading ? "Creating..." : "Create Project →"}
                         </button>
                     </div>
+
                 </div>
+
             </div>
         </div>
     );

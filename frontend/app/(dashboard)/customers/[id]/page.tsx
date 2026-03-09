@@ -1,10 +1,13 @@
 "use client";
-import React from "react";
-import { useEffect, useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "../../../../lib/api";
 import Link from "next/link";
-import { FaFolder, FaPlus, FaTrash, FaEdit, FaUser } from "react-icons/fa";
+import {
+    FaFolder, FaPlus, FaTrash, FaEdit,
+    FaEnvelope, FaPhone, FaArrowRight, FaCamera
+} from "react-icons/fa";
 
 interface Project {
     id: string;
@@ -77,99 +80,152 @@ export default function CustomerPage() {
         }
     };
 
-    if (loading) return <div className="p-8 text-gray-500">Loading...</div>;
-    if (!customer) return <div className="p-8 text-red-500">Customer not found.</div>;
+    if (loading) return (
+        <div className="page flex items-center justify-center">
+            <p style={{ color: "var(--color-text-faint)" }}>Loading...</p>
+        </div>
+    );
+
+    if (!customer) return (
+        <div className="page flex items-center justify-center">
+            <p style={{ color: "var(--color-danger)" }}>Customer not found.</p>
+        </div>
+    );
 
     return (
-        <div className="min-h-screen bg-gray-100 p-8">
+        <div className="page">
             <div className="max-w-4xl mx-auto space-y-6">
 
-                <Link href="/customers" className="text-blue-600 hover:text-blue-800 text-sm">
+                {/* Back */}
+                <Link
+                    href="/customers"
+                    className="inline-flex items-center gap-2 text-sm font-medium transition hover:opacity-70"
+                    style={{ color: "var(--color-text-faint)" }}
+                >
                     ← Back to Customers
                 </Link>
 
                 {/* Customer Card */}
-                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
+                <div className="card card-body">
                     {editing ? (
-                        <div className="space-y-4">
-                            <h2 className="text-xl font-bold mb-4">Edit Customer</h2>
-                            {editError && (
-                                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                                    {editError}
-                                </div>
-                            )}
+                        <div className="space-y-5">
+                            <h2 className="font-display text-2xl font-extrabold text-slate-800">
+                                Edit Customer
+                            </h2>
+
+                            {editError && <div className="alert-error">{editError}</div>}
+
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                                <label className="input-label">
+                                    Name <span style={{ color: "var(--color-danger)" }}>*</span>
+                                </label>
                                 <input
                                     type="text"
                                     value={form.name}
                                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="input"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                <label className="input-label">Email</label>
                                 <input
                                     type="email"
                                     value={form.email}
                                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="input"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                <label className="input-label">Phone</label>
                                 <input
                                     type="tel"
                                     value={form.phone}
                                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="input"
                                 />
                             </div>
-                            <div className="flex gap-3 pt-2">
+                            <div
+                                className="flex gap-3 pt-2"
+                                style={{ borderTop: "1px solid #f1f5f9" }}
+                            >
                                 <button
                                     onClick={handleSave}
                                     disabled={saving}
-                                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-2.5 rounded-xl font-semibold text-sm transition"
+                                    className="btn-primary"
                                 >
                                     {saving ? "Saving..." : "Save Changes"}
                                 </button>
                                 <button
                                     onClick={() => { setEditing(false); setEditError(""); }}
-                                    className="border border-gray-300 px-6 py-2.5 rounded-xl font-semibold text-sm transition"
+                                    className="btn-secondary"
                                 >
                                     Cancel
                                 </button>
                             </div>
                         </div>
                     ) : (
-                        <div className="flex justify-between items-start">
+                        <div className="flex justify-between items-start gap-4 flex-wrap">
                             <div className="flex items-center gap-5">
-                                <div className="bg-blue-100 text-blue-600 rounded-full w-14 h-14 flex items-center justify-center font-bold text-2xl">
+                                {/* Avatar */}
+                                <div
+                                    className="w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl flex-shrink-0"
+                                    style={{
+                                        backgroundColor: "rgba(251,191,36,0.12)",
+                                        color: "var(--color-amber-dark)",
+                                    }}
+                                >
                                     {customer.name.charAt(0).toUpperCase()}
                                 </div>
                                 <div>
-                                    <h1 className="text-2xl font-bold text-gray-900">{customer.name}</h1>
-                                    <p className="text-gray-500 text-sm mt-1">
-                                        {customer.email ?? "No email"}
-                                        {customer.phone ? ` • ${customer.phone}` : ""}
-                                    </p>
-                                    <p className="text-gray-400 text-sm mt-0.5">
-                                        {customer.projects.length} project{customer.projects.length !== 1 ? "s" : ""}
-                                    </p>
+                                    <h1 className="font-display text-3xl font-extrabold text-slate-900">
+                                        {customer.name}
+                                    </h1>
+                                    <div className="flex flex-wrap items-center gap-4 mt-2">
+                                        {customer.email && (
+                                            <span className="flex items-center gap-1.5 text-sm text-slate-400">
+                                                <FaEnvelope className="text-xs" />
+                                                {customer.email}
+                                            </span>
+                                        )}
+                                        {customer.phone && (
+                                            <span className="flex items-center gap-1.5 text-sm text-slate-400">
+                                                <FaPhone className="text-xs" />
+                                                {customer.phone}
+                                            </span>
+                                        )}
+                                        <span
+                                            className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                                            style={{ backgroundColor: "#f1f5f9", color: "#64748b" }}
+                                        >
+                                            {customer.projects.length} project{customer.projects.length !== 1 ? "s" : ""}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
+
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => setEditing(true)}
-                                    className="flex items-center gap-2 border border-gray-300 hover:border-gray-400 px-4 py-2 rounded-lg text-sm font-medium transition"
+                                    className="btn-secondary btn-sm flex items-center gap-2"
                                 >
-                                    <FaEdit /> Edit
+                                    <FaEdit className="text-xs" /> Edit
                                 </button>
                                 <button
                                     onClick={() => setConfirmDelete(true)}
-                                    className="flex items-center gap-2 border border-red-200 text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg text-sm font-medium transition"
+                                    className="btn-sm flex items-center gap-2 transition"
+                                    style={{
+                                        border: "1px solid #fecaca",
+                                        color: "#dc2626",
+                                        borderRadius: "0.75rem",
+                                        padding: "0.375rem 0.875rem",
+                                        fontWeight: 600,
+                                        fontSize: "0.75rem",
+                                        backgroundColor: "transparent",
+                                    }}
+                                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#fef2f2")}
+                                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
                                 >
-                                    <FaTrash /> Delete
+                                    <FaTrash className="text-xs" /> Delete
                                 </button>
                             </div>
                         </div>
@@ -178,22 +234,24 @@ export default function CustomerPage() {
 
                 {/* Delete Confirmation */}
                 {confirmDelete && (
-                    <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-                        <p className="font-semibold text-red-800 mb-1">Delete {customer.name}?</p>
+                    <div className="rounded-2xl p-6 bg-red-50 border border-red-200">
+                        <p className="font-bold text-red-800 mb-1">
+                            Delete {customer.name}?
+                        </p>
                         <p className="text-red-600 text-sm mb-4">
-                            This will permanently delete the customer and all their projects and photos.
+                            This will permanently delete the customer and all their projects and photos. This cannot be undone.
                         </p>
                         <div className="flex gap-3">
                             <button
                                 onClick={handleDelete}
                                 disabled={deleting}
-                                className="bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white px-5 py-2 rounded-lg text-sm font-semibold transition"
+                                className="btn-danger btn-sm"
                             >
                                 {deleting ? "Deleting..." : "Yes, delete"}
                             </button>
                             <button
                                 onClick={() => setConfirmDelete(false)}
-                                className="border border-gray-300 px-5 py-2 rounded-lg text-sm font-semibold transition"
+                                className="btn-secondary btn-sm"
                             >
                                 Cancel
                             </button>
@@ -201,59 +259,80 @@ export default function CustomerPage() {
                     </div>
                 )}
 
-                {/* Projects */}
-                <div>
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-bold">Projects</h2>
+                {/* Projects Section */}
+                <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                        <h2 className="font-display text-2xl font-extrabold text-slate-900">
+                            Projects
+                        </h2>
                         <Link
                             href={`/customers/${id}/projects/new`}
-                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition"
+                            className="btn-primary btn-sm flex items-center gap-2"
                         >
-                            <FaPlus /> New Project
+                            <FaPlus className="text-xs" /> New Project
                         </Link>
                     </div>
 
                     {customer.projects.length === 0 ? (
-                        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-                            <FaFolder className="text-gray-300 text-5xl mx-auto mb-3" />
-                            <p className="text-gray-500 mb-4">No projects yet</p>
+                        <div className="card card-body text-center py-16">
+                            <div
+                                className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                                style={{ backgroundColor: "#f1f5f9" }}
+                            >
+                                <FaFolder className="text-xl" style={{ color: "#94a3b8" }} />
+                            </div>
+                            <p className="font-bold text-slate-700 mb-1">No projects yet</p>
+                            <p className="text-slate-500 text-sm mb-5">
+                                Create a project to start uploading photos.
+                            </p>
                             <Link
                                 href={`/customers/${id}/projects/new`}
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition"
+                                className="btn-primary inline-flex mx-auto"
                             >
-                                Create first project
+                                <FaPlus className="text-xs" /> Create First Project
                             </Link>
                         </div>
                     ) : (
-                        <div className="grid gap-3">
+                        <div className="space-y-3">
                             {customer.projects.map((p) => (
-                                <div
+                                <Link
                                     key={p.id}
-                                    className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex justify-between items-center"
+                                    href={`/customers/${id}/projects/${p.id}`}
+                                    className="card card-body flex items-center justify-between gap-4 hover:shadow-md transition group"
+                                    style={{ padding: "1.25rem 1.5rem" }}
                                 >
-                                    <div className="flex items-center gap-4">
-                                        <div className="bg-green-100 text-green-600 rounded-lg w-10 h-10 flex items-center justify-center">
-                                            <FaFolder />
+                                    <div className="flex items-center gap-4 min-w-0">
+                                        <div
+                                            className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                            style={{ backgroundColor: "#f0fdf4" }}
+                                        >
+                                            <FaFolder className="text-sm" style={{ color: "#22c55e" }} />
                                         </div>
-                                        <div>
-                                            <p className="font-semibold text-gray-900">{p.name}</p>
-                                            <p className="text-sm text-gray-500">
-                                                {p.address ?? "No address"} • {new Date(p.createdAt).toLocaleDateString()}
+                                        <div className="min-w-0">
+                                            <p className="font-bold text-slate-800 group-hover:text-amber-600 transition truncate">
+                                                {p.name}
+                                            </p>
+                                            <p className="text-sm text-slate-400 truncate">
+                                                {p.address ?? "No address"} · {new Date(p.createdAt).toLocaleDateString("en-US", {
+                                                    month: "short", day: "numeric", year: "numeric"
+                                                })}
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-6">
-                                        <span className="text-sm text-gray-400">
+
+                                    <div className="flex items-center gap-4 flex-shrink-0">
+                                        <span
+                                            className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
+                                            style={{ backgroundColor: "#f1f5f9", color: "#64748b" }}
+                                        >
+                                            <FaCamera className="text-xs" />
                                             {p._count.photos} photo{p._count.photos !== 1 ? "s" : ""}
                                         </span>
-                                        <Link
-                                            href={`/customers/${id}/projects/${p.id}`}
-                                            className="text-blue-600 hover:text-blue-800 font-medium text-sm"
-                                        >
-                                            View →
-                                        </Link>
+                                        <FaArrowRight
+                                            className="text-slate-300 group-hover:text-amber-400 transition text-sm"
+                                        />
                                     </div>
-                                </div>
+                                </Link>
                             ))}
                         </div>
                     )}

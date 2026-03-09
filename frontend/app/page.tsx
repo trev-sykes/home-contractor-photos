@@ -1,180 +1,259 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { welcome } from "@/lib/auth";
 import Image from "next/image";
 import BeforeAfterSlider from "./components/sliders/BeforeAfterSlider";
+
+const testimonials = [
+  {
+    name: "Mike Torrence",
+    trade: "General Contractor",
+    location: "Phoenix, AZ",
+    quote: "I used to lose jobs because I couldn't show my work fast enough. Now I send a link on the spot and close on the first call.",
+    initials: "MT",
+  },
+  {
+    name: "Danny Reyes",
+    trade: "Kitchen & Bath Remodeler",
+    location: "Austin, TX",
+    quote: "The before/after slider alone is worth it. Clients share it with their neighbors and I get referrals I never had to ask for.",
+    initials: "DR",
+  },
+  {
+    name: "Scott Whaley",
+    trade: "Roofing Contractor",
+    location: "Nashville, TN",
+    quote: "Every job site photo used to disappear into my camera roll. Now everything is organized by customer, by project. Game changer.",
+    initials: "SW",
+  },
+];
+
+const faqs = [
+  {
+    q: "Do I need any technical skills to use this?",
+    a: "None at all. If you can take a photo on your phone and send a text, you can use Home Contractor Photos. It was built specifically for contractors, not tech people.",
+  },
+  {
+    q: "How does the client share link work?",
+    a: "Every project gets a unique link you can text or email to your client. They tap it and see a clean page with all your project photos — no app download, no login required on their end.",
+  },
+  {
+    q: "Can I use this on my phone on the job site?",
+    a: "Yes. The app is fully mobile-optimized. Upload photos directly from your phone camera the moment you take them.",
+  },
+  {
+    q: "What happens after my 14-day trial?",
+    a: "You'll be prompted to subscribe for $15/month to keep access. We don't auto-charge — you choose when you're ready. Your photos are never deleted.",
+  },
+  {
+    q: "Can I add my company logo?",
+    a: "Yes. Upload your logo once in Settings and it automatically appears on every client share page you send out.",
+  },
+  {
+    q: "Is there a limit on photos or projects?",
+    a: "No limits. Unlimited photos, unlimited projects, unlimited customers — all for one flat monthly price.",
+  },
+];
+
+function FAQItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      className="border-b border-slate-700 py-5 cursor-pointer group"
+      onClick={() => setOpen(!open)}
+    >
+      <div className="flex justify-between items-center gap-4">
+        <p className="font-semibold text-white group-hover:text-amber-400 transition text-lg">{q}</p>
+        <span className={`text-amber-400 text-xl flex-shrink-0 transition-transform duration-300 ${open ? "rotate-45" : ""}`}>+</span>
+      </div>
+      {open && (
+        <p className="text-slate-400 mt-3 leading-relaxed">{a}</p>
+      )}
+    </div>
+  );
+}
+
 export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    // Optional welcome message fetch (if still needed)
     const getMessage = async () => {
-      try {
-        const res = await welcome();
-        console.log(res); // or handle if you want to display it somewhere
-      } catch { }
+      try { await welcome(); } catch { }
     };
     getMessage();
-
     const token = localStorage.getItem("token");
-    if (token) {
-      router.push("/dashboard");
-    }
+    if (token) router.push("/dashboard");
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 to-zinc-900 text-white">
-      {/* Header */}
-      <header className="border-b border-zinc-800 bg-black">
+    <div className="min-h-screen bg-slate-950 text-white" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+
+      {/* Google Font */}
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap');`}</style>
+
+      {/* ── HEADER ── */}
+      <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-
-          {/* Logo + App Name */}
-          <Link href="/dashboard" className="flex items-center gap-3">
-            {/* App Name */}
-            <span className="text-white font-bold text-xl">
-              Home Contractor Photos
-            </span>
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center">
+              <span className="text-slate-950 font-black text-sm">HC</span>
+            </div>
+            <span className="font-bold text-lg text-white">Home Contractor Photos</span>
           </Link>
-
-          {/* Auth Links */}
-          <div className="flex gap-4">
-            <Link
-              href="/login"
-              className="text-zinc-400 hover:text-white transition"
-            >
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="text-slate-400 hover:text-white transition text-sm font-medium">
               Log In
             </Link>
             <Link
               href="/register"
-              className="bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-lg font-semibold transition"
+              className="bg-amber-400 hover:bg-amber-300 text-slate-950 px-5 py-2.5 rounded-lg font-bold text-sm transition shadow-lg shadow-amber-900/20"
             >
-              Get Started Free
+              Start Free →
             </Link>
           </div>
-
         </div>
       </header>
 
-      {/* Hero Section */}
-      < section className="max-w-6xl mx-auto px-6 py-20 md:py-28 text-center" >
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-          Capture Every Job.<br />
-          <span className="text-blue-500">Close More Deals.</span>
-        </h1>
-
-        <p className="text-xl text-zinc-300 mb-10 max-w-3xl mx-auto">
-          The easiest way for contractors to organize project photos, create powerful before/afters, and prove your work to win bigger jobs.
-        </p>
-
-        <div className="flex gap-5 justify-center flex-wrap">
-          <Link
-            href="/register"
-            className="bg-blue-600 hover:bg-blue-700 px-9 py-4 rounded-xl font-semibold text-lg transition shadow-lg shadow-blue-900/30"
-          >
-            Start Free Trial →
-          </Link>
-          <button className="border border-zinc-700 hover:border-zinc-500 px-9 py-4 rounded-xl font-semibold text-lg transition">
-            Watch Demo
-          </button>
+      {/* ── HERO ── */}
+      <section className="relative overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-amber-500/8 rounded-full blur-3xl" />
         </div>
 
-        <p className="text-zinc-500 mt-5 text-sm">
-          No credit card needed • 14-day free trial • Cancel anytime
-        </p>
-
-        {/* Hero placeholder — dashboard screenshot */}
-        <div className="mt-16 rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl shadow-black/50 relative w-full h-64 md:h-96 bg-gradient-to-br from-zinc-800 to-zinc-950">
-          <Image
-            src="/dashboard.png"
-            alt="Dashboard"
-            fill
-            className="object-contain"
-            priority
-          />
-        </div>
-      </section >
-
-      {/* Problem Section */}
-      < section className="bg-zinc-900 border-y border-zinc-800 py-20" >
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-14">
-            Tired of Photos Holding You Back?
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-zinc-800/70 p-7 rounded-xl border border-zinc-700 backdrop-blur-sm">
-              <div className="text-5xl mb-5">📱</div>
-              <h3 className="text-2xl font-semibold mb-3">Chaotic Photo Mess</h3>
-              <p className="text-zinc-400">
-                Thousands of photos buried in your camera roll. Can't quickly find that perfect bathroom remodel from 6 months ago.
-              </p>
-            </div>
-
-            <div className="bg-zinc-800/70 p-7 rounded-xl border border-zinc-700 backdrop-blur-sm">
-              <div className="text-5xl mb-5">🏠</div>
-              <h3 className="text-2xl font-semibold mb-3">No Professional Proof</h3>
-              <p className="text-zinc-400">
-                Prospects ask to see your work — you fumble through albums and lose the sale.
-              </p>
-            </div>
-
-            <div className="bg-zinc-800/70 p-7 rounded-xl border border-zinc-700 backdrop-blur-sm">
-              <div className="text-5xl mb-5">⏳</div>
-              <h3 className="text-2xl font-semibold mb-3">Wasted Hours</h3>
-              <p className="text-zinc-400">
-                Spending evenings in editing apps to make before/afters instead of bidding new jobs.
-              </p>
-            </div>
+        <div className="max-w-6xl mx-auto px-6 pt-24 pb-20 text-center relative">
+          <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/20 text-amber-400 text-sm font-semibold px-4 py-2 rounded-full mb-8">
+            <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" />
+            Built for contractors, by contractors
           </div>
-        </div>
-      </section >
 
-      {/* Features Section */}
-      < section className="py-24" >
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-6">
-            Built for Contractors — Simple & Powerful
-          </h2>
-          <p className="text-zinc-400 text-center mb-16 max-w-3xl mx-auto text-lg">
-            No learning curve. No unnecessary features. Just the tools to organize photos and impress clients fast.
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-[1.05] tracking-tight" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            Your work speaks.<br />
+            <span className="text-amber-400">Make it visible.</span>
+          </h1>
+
+          <p className="text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Organize every job photo, create stunning before/afters, and send clients a professional share link — all in under 2 minutes.
           </p>
 
-          <div className="space-y-20">
+          <div className="flex gap-4 justify-center flex-wrap mb-6">
+            <Link
+              href="/register"
+              className="bg-amber-400 hover:bg-amber-300 text-slate-950 px-8 py-4 rounded-xl font-bold text-lg transition shadow-xl shadow-amber-900/25"
+            >
+              Start Free Trial →
+            </Link>
+            <Link
+              href="/login"
+              className="border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white px-8 py-4 rounded-xl font-semibold text-lg transition"
+            >
+              Log In
+            </Link>
+          </div>
+
+          <p className="text-slate-600 text-sm">No credit card needed · 14-day free trial · Cancel anytime</p>
+
+          {/* Dashboard screenshot */}
+          <div className="mt-16 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl shadow-black/60 relative w-full h-64 md:h-[480px] bg-slate-900">
+            <Image
+              src="/dashboard.png"
+              alt="Dashboard"
+              fill
+              className="object-cover object-top"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
+          </div>
+        </div>
+      </section>
+
+      {/* ── SOCIAL PROOF STRIP ── */}
+      <section className="border-y border-slate-800 bg-slate-900/50 py-6">
+        <div className="max-w-4xl mx-auto px-6 flex flex-wrap justify-center gap-8 text-center">
+          {[
+            { stat: "2 min", label: "avg. setup time" },
+            { stat: "∞", label: "photos & projects" },
+            { stat: "$15", label: "flat monthly price" },
+            { stat: "0", label: "tech skills needed" },
+          ].map(({ stat, label }) => (
+            <div key={label}>
+              <p className="text-3xl font-black text-amber-400">{stat}</p>
+              <p className="text-slate-500 text-sm mt-0.5">{label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── PROBLEM ── */}
+      <section className="py-24">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="text-amber-400 font-bold text-sm uppercase tracking-widest text-center mb-4">Sound familiar?</p>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-center mb-16" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            Photos shouldn't cost you jobs.
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { icon: "📱", title: "Chaotic Camera Roll", body: "Thousands of photos with no organization. Finding that bathroom remodel from 6 months ago takes 20 minutes." },
+              { icon: "🤝", title: "Lost Sales", body: "Prospects ask to see your work — you fumble through albums, send blurry screenshots, and lose the bid." },
+              { icon: "⏳", title: "Wasted Evenings", body: "Spending hours in editing apps making before/afters instead of bidding new jobs or being home with family." },
+            ].map(({ icon, title, body }) => (
+              <div key={title} className="bg-slate-900 border border-slate-800 rounded-2xl p-8 hover:border-slate-700 transition">
+                <div className="text-4xl mb-5">{icon}</div>
+                <h3 className="text-xl font-bold mb-3">{title}</h3>
+                <p className="text-slate-400 leading-relaxed">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FEATURES ── */}
+      <section className="py-24 bg-slate-900/40">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="text-amber-400 font-bold text-sm uppercase tracking-widest text-center mb-4">How it works</p>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-center mb-6" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            Simple enough for the job site.
+          </h2>
+          <p className="text-slate-400 text-center mb-20 max-w-2xl mx-auto text-lg">
+            No learning curve. No bloated features. Just the tools to organize photos and impress clients in minutes.
+          </p>
+
+          <div className="space-y-24">
             {/* Feature 1 */}
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="grid md:grid-cols-2 gap-16 items-center">
               <div>
-                <h3 className="text-3xl font-bold mb-5">
-                  📸 Smart Organization — Zero Effort
+                <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/20 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-full mb-6 uppercase tracking-wider">
+                  Step 1
+                </div>
+                <h3 className="text-3xl md:text-4xl font-extrabold mb-5" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                  Organize every job automatically.
                 </h3>
-                <p className="text-zinc-300 mb-6 text-lg">
-                  Snap photos on-site. We sort them automatically by job, customer, and date.
+                <p className="text-slate-400 mb-8 text-lg leading-relaxed">
+                  Create a customer, add a project, upload photos. Everything stays sorted by job and client — forever.
                 </p>
-                <ul className="space-y-3 text-zinc-200 text-base">
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    Instant mobile uploads
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    Search by client name or month
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    Photos never get lost again
-                  </li>
+                <ul className="space-y-3">
+                  {["Upload from your phone on-site", "Search any client or project instantly", "Photos never get buried again"].map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-slate-300">
+                      <span className="w-5 h-5 bg-amber-400/15 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-amber-400 text-xs">✓</span>
+                      </span>
+                      {item}
+                    </li>
+                  ))}
                 </ul>
               </div>
-              <div className="bg-zinc-800 rounded-2xl p-10 border border-zinc-700 aspect-video flex items-center justify-center">
-                <p className="text-zinc-500 text-xl">Organization Dashboard Screenshot</p>
+              <div className="bg-slate-900 rounded-2xl border border-slate-800 aspect-video flex items-center justify-center overflow-hidden">
+                <Image src="/dashboard.png" alt="Organization" width={600} height={400} className="object-cover w-full h-full" />
               </div>
             </div>
 
-            {/* Feature 2 */}
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="order-2 md:order-1 rounded-2xl overflow-hidden border border-zinc-700 aspect-video">
+            {/* Feature 2 — Before/After Slider */}
+            <div className="grid md:grid-cols-2 gap-16 items-center">
+              <div className="order-2 md:order-1 rounded-2xl overflow-hidden border border-slate-800 aspect-video shadow-2xl">
                 <BeforeAfterSlider
                   before="/before.png"
                   after="/after.png"
@@ -183,177 +262,225 @@ export default function Home() {
                 />
               </div>
               <div className="order-1 md:order-2">
-                <h3 className="text-3xl font-bold mb-5">
-                  🎨 Instant Before/After Magic
+                <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/20 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-full mb-6 uppercase tracking-wider">
+                  Step 2
+                </div>
+                <h3 className="text-3xl md:text-4xl font-extrabold mb-5" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                  Let the transformation sell itself.
                 </h3>
-                <p className="text-zinc-300 mb-6 text-lg">
-                  Turn raw photos into client-winning comparisons in one click.
+                <p className="text-slate-400 mb-8 text-lg leading-relaxed">
+                  Tag photos as before or after and get an interactive slider clients can drag. No editing software. No extra steps.
                 </p>
-                <ul className="space-y-3 text-zinc-200 text-base">
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    Side-by-side or interactive slider
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    Auto-add your logo watermark
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    Ready for social media & proposals
-                  </li>
+                <ul className="space-y-3">
+                  {["Interactive drag-to-reveal slider", "Your logo on every share page", "Ready to send in seconds"].map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-slate-300">
+                      <span className="w-5 h-5 bg-amber-400/15 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-amber-400 text-xs">✓</span>
+                      </span>
+                      {item}
+                    </li>
+                  ))}
                 </ul>
+                <p className="text-slate-600 text-sm mt-6 italic">← Click and drag to reveal</p>
               </div>
             </div>
 
             {/* Feature 3 */}
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="grid md:grid-cols-2 gap-16 items-center">
               <div>
-                <h3 className="text-3xl font-bold mb-5">
-                  📲 Real-Time Progress Sharing
+                <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/20 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-full mb-6 uppercase tracking-wider">
+                  Step 3
+                </div>
+                <h3 className="text-3xl md:text-4xl font-extrabold mb-5" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                  Send one link. Win the trust.
                 </h3>
-                <p className="text-zinc-300 mb-6 text-lg">
-                  Send clients a private link — they see updates as you upload.
+                <p className="text-slate-400 mb-8 text-lg leading-relaxed">
+                  Every project has a shareable link. Text it to your client and they see a professional branded page — no app, no login.
                 </p>
-                <ul className="space-y-3 text-zinc-200 text-base">
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    One-tap shareable links
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    No login needed for clients
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-green-500 text-xl mt-0.5">✓</span>
-                    Builds trust & reduces calls
-                  </li>
+                <ul className="space-y-3">
+                  {["One tap to copy & share", "Clients see live progress updates", "Builds trust, reduces check-in calls"].map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-slate-300">
+                      <span className="w-5 h-5 bg-amber-400/15 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-amber-400 text-xs">✓</span>
+                      </span>
+                      {item}
+                    </li>
+                  ))}
                 </ul>
               </div>
-              <div className="bg-zinc-800 rounded-2xl p-10 border border-zinc-700 aspect-video flex items-center justify-center">
-                <p className="text-zinc-500 text-xl">Client Share Link Preview</p>
+              <div className="bg-slate-900 rounded-2xl border border-slate-800 aspect-video flex items-center justify-center">
+                <div className="text-center px-8">
+                  <div className="bg-slate-800 rounded-xl p-6 border border-slate-700 max-w-xs mx-auto">
+                    <p className="text-xs text-slate-500 mb-2">Share link copied!</p>
+                    <p className="text-slate-300 text-sm font-mono bg-slate-900 rounded px-3 py-2 border border-slate-700 truncate">
+                      hcp.app/share/abc123...
+                    </p>
+                    <p className="text-xs text-slate-500 mt-3">Client sees your branded project page instantly</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </section >
+      </section>
 
-      {/* CTA / Pricing Section (simplified & punchier) */}
-      < section className="py-24 bg-gradient-to-b from-zinc-900 to-zinc-950" >
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Get Organized. Win More.
+      {/* ── TESTIMONIALS ── */}
+      <section className="py-24">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="text-amber-400 font-bold text-sm uppercase tracking-widest text-center mb-4">Testimonials</p>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-center mb-16" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            Contractors trust it. Clients love it.
           </h2>
-          <p className="text-xl text-zinc-300 mb-10">
-            One straightforward plan — unlimited everything.
-          </p>
 
-          <div className="bg-gradient-to-br from-blue-700 to-blue-900 rounded-3xl p-10 md:p-14 border border-blue-600/40 shadow-2xl shadow-blue-950/40">
-            <h3 className="text-3xl font-bold mb-4">Pro Plan</h3>
-            <div className="mb-8">
-              <span className="text-6xl font-extrabold">$15</span>
-              <span className="text-2xl text-blue-200"> / month</span>
-            </div>
-
-            <ul className="text-left space-y-4 mb-10 max-w-md mx-auto text-lg">
-              <li className="flex items-center gap-3">
-                <span className="text-green-400 text-2xl">✓</span>
-                Unlimited photos & projects
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="text-green-400 text-2xl">✓</span>
-                Unlimited before/afters
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="text-green-400 text-2xl">✓</span>
-                Your logo auto-watermarked
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="text-green-400 text-2xl">✓</span>
-                Client progress sharing links
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="text-green-400 text-2xl">✓</span>
-                iOS + Android mobile access
-              </li>
-            </ul>
-
-            <Link
-              href="/register"
-              className="bg-white text-blue-900 hover:bg-blue-50 px-10 py-5 rounded-xl font-bold text-xl inline-block transition shadow-lg"
-            >
-              Start 14-Day Free Trial
-            </Link>
-            <p className="text-blue-200 mt-5 text-base">
-              No card required • Cancel anytime
-            </p>
+          <div className="grid md:grid-cols-3 gap-6">
+            {testimonials.map(({ name, trade, location, quote, initials }) => (
+              <div key={name} className="bg-slate-900 border border-slate-800 rounded-2xl p-8 flex flex-col hover:border-amber-400/30 transition">
+                <p className="text-amber-400 text-2xl mb-4">"</p>
+                <p className="text-slate-300 leading-relaxed flex-1 mb-6">{quote}</p>
+                <div className="flex items-center gap-3 border-t border-slate-800 pt-5">
+                  <div className="w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center font-black text-slate-950 text-sm flex-shrink-0">
+                    {initials}
+                  </div>
+                  <div>
+                    <p className="font-bold text-white text-sm">{name}</p>
+                    <p className="text-slate-500 text-xs">{trade} · {location}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </section >
+      </section>
 
-      {/* Final CTA */}
-      < section className="py-20 text-center" >
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-5xl font-bold mb-6">
-            Ready to Level Up Your Bids?
+      {/* ── PRICING ── */}
+      <section className="py-24 bg-slate-900/40">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <p className="text-amber-400 font-bold text-sm uppercase tracking-widest mb-4">Pricing</p>
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-6" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            One plan. Everything included.
           </h2>
-          <p className="text-xl text-zinc-300 mb-10">
-            Join contractors who turn photos into profit.
+          <p className="text-slate-400 text-lg mb-12">No tiers. No gotchas. Just one price that makes sense.</p>
+
+          <div className="bg-slate-900 border border-amber-400/30 rounded-3xl p-10 md:p-14 shadow-2xl shadow-amber-900/10 relative overflow-hidden">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-32 bg-amber-400/5 blur-3xl rounded-full" />
+
+            <div className="relative">
+              <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/30 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-full mb-6 uppercase tracking-wider">
+                Pro Plan — Most Popular
+              </div>
+
+              <div className="mb-8">
+                <span className="text-7xl font-black text-white">$15</span>
+                <span className="text-2xl text-slate-400"> / month</span>
+              </div>
+
+              <ul className="text-left space-y-4 mb-10 max-w-sm mx-auto">
+                {[
+                  "Unlimited photos & projects",
+                  "Unlimited before/after sliders",
+                  "Your logo on every share page",
+                  "Client progress sharing links",
+                  "Mobile-optimized for job sites",
+                  "14-day free trial included",
+                ].map((item) => (
+                  <li key={item} className="flex items-center gap-3 text-slate-300">
+                    <span className="w-5 h-5 bg-amber-400/15 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-amber-400 text-xs">✓</span>
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                href="/register"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 px-10 py-5 rounded-xl font-black text-xl inline-block transition shadow-xl shadow-amber-900/20"
+              >
+                Start 14-Day Free Trial
+              </Link>
+              <p className="text-slate-600 mt-4 text-sm">No card required · Cancel anytime</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="py-24">
+        <div className="max-w-3xl mx-auto px-6">
+          <p className="text-amber-400 font-bold text-sm uppercase tracking-widest text-center mb-4">FAQ</p>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-center mb-16" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            Questions answered.
+          </h2>
+          <div>
+            {faqs.map((faq) => (
+              <FAQItem key={faq.q} {...faq} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FINAL CTA ── */}
+      <section className="py-24 bg-slate-900/40">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <h2 className="text-5xl md:text-6xl font-extrabold mb-6" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            Your next job is waiting.
+          </h2>
+          <p className="text-slate-400 text-xl mb-10">
+            Start organizing your photos today and win more bids tomorrow.
           </p>
           <Link
             href="/register"
-            className="bg-blue-600 hover:bg-blue-700 px-10 py-5 rounded-xl font-bold text-xl inline-block transition shadow-lg shadow-blue-900/30"
+            className="bg-amber-400 hover:bg-amber-300 text-slate-950 px-10 py-5 rounded-xl font-black text-xl inline-block transition shadow-xl shadow-amber-900/20"
           >
             Get Started Free →
           </Link>
-          <p className="text-zinc-500 mt-6">
-            14 days free • No credit card needed
-          </p>
+          <p className="text-slate-600 mt-5 text-sm">14 days free · No credit card needed</p>
         </div>
-      </section >
+      </section>
 
-      {/* Footer */}
-      < footer className="border-t border-zinc-800 py-16" >
+      {/* ── FOOTER ── */}
+      <footer className="border-t border-slate-800 py-16">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-10">
+          <div className="grid md:grid-cols-4 gap-10 mb-12">
             <div>
-              <div className="text-2xl font-bold mb-4">Home Contractor Photos</div>
-              <p className="text-zinc-400 text-sm">
-                Simple photo tools built for contractors.
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center">
+                  <span className="text-slate-950 font-black text-sm">HC</span>
+                </div>
+                <span className="font-bold text-white">Home Contractor Photos</span>
+              </div>
+              <p className="text-slate-500 text-sm leading-relaxed">
+                Simple photo tools built for contractors who want to close more deals.
               </p>
             </div>
-
             <div>
-              <h4 className="font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-zinc-400 text-sm">
-                <li><Link href="#" className="hover:text-white">Features</Link></li>
-                <li><Link href="#" className="hover:text-white">Pricing</Link></li>
-                <li><Link href="#" className="hover:text-white">Demo</Link></li>
+              <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">Product</h4>
+              <ul className="space-y-2 text-slate-500 text-sm">
+                <li><Link href="#" className="hover:text-amber-400 transition">Features</Link></li>
+                <li><Link href="#" className="hover:text-amber-400 transition">Pricing</Link></li>
+                <li><Link href="/register" className="hover:text-amber-400 transition">Get Started</Link></li>
               </ul>
             </div>
-
             <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-zinc-400 text-sm">
-                <li><Link href="#" className="hover:text-white">About</Link></li>
-                <li><Link href="#" className="hover:text-white">Contact</Link></li>
+              <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">Company</h4>
+              <ul className="space-y-2 text-slate-500 text-sm">
+                <li><Link href="#" className="hover:text-amber-400 transition">About</Link></li>
+                <li><Link href="#" className="hover:text-amber-400 transition">Contact</Link></li>
               </ul>
             </div>
-
             <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-zinc-400 text-sm">
-                <li><Link href="#" className="hover:text-white">Privacy Policy</Link></li>
-                <li><Link href="#" className="hover:text-white">Terms of Service</Link></li>
+              <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">Legal</h4>
+              <ul className="space-y-2 text-slate-500 text-sm">
+                <li><Link href="#" className="hover:text-amber-400 transition">Privacy Policy</Link></li>
+                <li><Link href="#" className="hover:text-amber-400 transition">Terms of Service</Link></li>
               </ul>
             </div>
           </div>
-
-          <div className="border-t border-zinc-800 mt-12 pt-8 text-center text-zinc-500 text-sm">
+          <div className="border-t border-slate-800 pt-8 text-center text-slate-600 text-sm">
             © {new Date().getFullYear()} Home Contractor Photos. All rights reserved.
           </div>
         </div>
-      </footer >
-    </div >
+      </footer>
+    </div>
   );
 }

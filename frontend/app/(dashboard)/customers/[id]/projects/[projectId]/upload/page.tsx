@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import Link from "next/link";
-import { FaCamera, FaTrash, FaUpload } from "react-icons/fa";
+import { FaCamera, FaTrash, FaUpload, FaPlus } from "react-icons/fa";
 
 type PhotoType = "before" | "after" | "progress";
 
@@ -14,34 +14,36 @@ interface PendingPhoto {
     type: PhotoType;
 }
 
+const TYPE_STYLES: Record<PhotoType, { active: string; inactive: string }> = {
+    before: { active: "bg-red-50 border-red-300 text-red-700", inactive: "bg-white border-slate-200 text-slate-500 hover:border-slate-400" },
+    after: { active: "bg-green-50 border-green-300 text-green-700", inactive: "bg-white border-slate-200 text-slate-500 hover:border-slate-400" },
+    progress: { active: "bg-blue-50 border-blue-300 text-blue-700", inactive: "bg-white border-slate-200 text-slate-500 hover:border-slate-400" },
+};
+
 export default function UploadPage() {
     const { id, projectId } = useParams<{ id: string; projectId: string }>();
     const router = useRouter();
 
     const [pending, setPending] = useState<PendingPhoto[]>([]);
     const [uploading, setUploading] = useState(false);
+    const [uploadedCount, setUploadedCount] = useState(0);
     const [error, setError] = useState("");
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files ?? []);
         if (!files.length) return;
-
         const newPhotos: PendingPhoto[] = files.map((file) => ({
             file,
             preview: URL.createObjectURL(file),
-            type: "progress", // default type
+            type: "progress",
         }));
-
         setPending((prev) => [...prev, ...newPhotos]);
-        // Reset input so same file can be re-added if needed
         e.target.value = "";
     };
 
     const updateType = (index: number, type: PhotoType) => {
-        setPending((prev) =>
-            prev.map((p, i) => (i === index ? { ...p, type } : p))
-        );
+        setPending((prev) => prev.map((p, i) => (i === index ? { ...p, type } : p)));
     };
 
     const remove = (index: number) => {
@@ -55,9 +57,8 @@ export default function UploadPage() {
         if (!pending.length) return;
         setUploading(true);
         setError("");
-
+        setUploadedCount(0);
         try {
-            // Upload sequentially to avoid hammering the server
             for (const photo of pending) {
                 const formData = new FormData();
                 formData.append("photo", photo.file);
@@ -67,6 +68,7 @@ export default function UploadPage() {
                     formData,
                     { headers: { "Content-Type": "multipart/form-data" } }
                 );
+                setUploadedCount((n) => n + 1);
             }
             router.push(`/customers/${id}/projects/${projectId}`);
         } catch (err) {
@@ -78,31 +80,71 @@ export default function UploadPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 p-8">
+        <div className="page">
             <div className="max-w-3xl mx-auto space-y-6">
 
+                {/* Back */}
                 <Link
                     href={`/customers/${id}/projects/${projectId}`}
-                    className="text-blue-600 hover:text-blue-800 text-sm"
+                    className="inline-flex items-center gap-2 text-sm font-medium transition hover:opacity-70"
+                    style={{ color: "var(--color-text-faint)" }}
                 >
                     ← Back to Project
                 </Link>
 
-                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
-                    <h1 className="text-2xl font-bold mb-2">Upload Photos</h1>
-                    <p className="text-gray-500 text-sm mb-8">
-                        Select photos then assign each one a type before uploading.
+                {/* Header */}
+                <div>
+                    <p className="section-eyebrow">Project</p>
+                    <h1 className="font-display text-4xl font-extrabold text-slate-900">
+                        Upload Photos
+                    </h1>
+                    <p className="text-slate-500 text-sm mt-1">
+                        Select photos and tag each one as before, after, or progress.
                     </p>
+                </div>
 
-                    {/* Drop zone / file picker */}
+                <div className="card card-body space-y-6">
+
+                    {/* Drop zone */}
                     <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full border-2 border-dashed border-gray-300 hover:border-blue-400 rounded-xl py-12 flex flex-col items-center gap-3 text-gray-400 hover:text-blue-500 transition"
+                        className="w-full rounded-2xl py-14 flex flex-col items-center gap-3 transition group"
+                        style={{
+                            border: "2px dashed #cbd5e1",
+                            backgroundColor: "#f8fafc",
+                        }}
+                        onMouseEnter={e => {
+                            e.currentTarget.style.borderColor = "var(--color-amber)";
+                            e.currentTarget.style.backgroundColor = "rgba(251,191,36,0.04)";
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.borderColor = "#cbd5e1";
+                            e.currentTarget.style.backgroundColor = "#f8fafc";
+                        }}
                     >
-                        <FaCamera className="text-4xl" />
-                        <span className="font-medium">Click to select photos</span>
-                        <span className="text-sm">JPG, PNG, WEBP up to 10MB each</span>
+                        <div
+                            className="w-14 h-14 rounded-2xl flex items-center justify-center mb-1 transition"
+                            style={{ backgroundColor: "#f1f5f9" }}
+                        >
+                            <FaCamera className="text-2xl" style={{ color: "#94a3b8" }} />
+                        </div>
+                        <p className="font-bold text-slate-700">Click to select photos</p>
+                        <p className="text-sm text-slate-400">JPG, PNG, WEBP · Max 10MB each</p>
+                        {pending.length > 0 && (
+                            <span
+                                className="mt-2 flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
+                                style={{
+                                    backgroundColor: "rgba(251,191,36,0.1)",
+                                    color: "var(--color-amber-dark)",
+                                    border: "1px solid rgba(251,191,36,0.2)",
+                                }}
+                            >
+                                <FaPlus className="text-xs" />
+                                Add more photos
+                            </span>
+                        )}
                     </button>
+
                     <input
                         ref={fileInputRef}
                         type="file"
@@ -112,83 +154,114 @@ export default function UploadPage() {
                         onChange={handleFileChange}
                     />
 
-                    {/* Pending photos */}
+                    {/* Pending list */}
                     {pending.length > 0 && (
-                        <div className="mt-8 space-y-4">
-                            <h2 className="font-semibold text-gray-700">
-                                {pending.length} photo{pending.length !== 1 ? "s" : ""} selected
-                            </h2>
-
-                            {pending.map((photo, i) => (
-                                <div
-                                    key={i}
-                                    className="flex items-center gap-4 bg-gray-50 rounded-xl p-3 border border-gray-200"
-                                >
-                                    {/* Preview */}
-                                    <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
-                                        <img
-                                            src={photo.preview}
-                                            alt="preview"
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-
-                                    {/* File name + type selector */}
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-gray-800 truncate mb-2">
-                                            {photo.file.name}
-                                        </p>
-                                        <div className="flex gap-2">
-                                            {(["before", "after", "progress"] as PhotoType[]).map((t) => (
-                                                <button
-                                                    key={t}
-                                                    onClick={() => updateType(i, t)}
-                                                    className={`px-3 py-1 rounded-lg text-xs font-semibold border transition capitalize ${photo.type === t
-                                                            ? t === "before"
-                                                                ? "bg-red-100 border-red-300 text-red-700"
-                                                                : t === "after"
-                                                                    ? "bg-green-100 border-green-300 text-green-700"
-                                                                    : "bg-blue-100 border-blue-300 text-blue-700"
-                                                            : "bg-white border-gray-200 text-gray-500 hover:border-gray-400"
-                                                        }`}
-                                                >
-                                                    {t}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Remove */}
-                                    <button
-                                        onClick={() => remove(i)}
-                                        className="text-gray-400 hover:text-red-500 transition p-2"
-                                    >
-                                        <FaTrash />
-                                    </button>
-                                </div>
-                            ))}
-
-                            {error && (
-                                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                                    {error}
-                                </div>
-                            )}
-
-                            <div className="flex gap-3 pt-2">
-                                <button
-                                    onClick={handleUpload}
-                                    disabled={uploading}
-                                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-xl font-semibold transition"
-                                >
-                                    <FaUpload />
-                                    {uploading ? "Uploading..." : `Upload ${pending.length} photo${pending.length !== 1 ? "s" : ""}`}
-                                </button>
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <p className="font-bold text-slate-700 text-sm">
+                                    {pending.length} photo{pending.length !== 1 ? "s" : ""} selected
+                                </p>
                                 <button
                                     onClick={() => setPending([])}
                                     disabled={uploading}
-                                    className="border border-gray-300 hover:border-gray-400 px-6 py-3 rounded-xl font-semibold text-sm transition"
+                                    className="text-xs font-medium transition hover:opacity-70"
+                                    style={{ color: "var(--color-text-faint)" }}
                                 >
                                     Clear all
+                                </button>
+                            </div>
+
+                            <div className="space-y-3">
+                                {pending.map((photo, i) => (
+                                    <div
+                                        key={i}
+                                        className="flex items-center gap-4 rounded-xl p-3"
+                                        style={{
+                                            backgroundColor: "#f8fafc",
+                                            border: "1px solid #e2e8f0",
+                                        }}
+                                    >
+                                        {/* Preview */}
+                                        <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border border-slate-200">
+                                            <img
+                                                src={photo.preview}
+                                                alt="preview"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+
+                                        {/* Name + type */}
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-semibold text-slate-700 truncate mb-2">
+                                                {photo.file.name}
+                                            </p>
+                                            <div className="flex gap-1.5">
+                                                {(["before", "after", "progress"] as PhotoType[]).map((t) => (
+                                                    <button
+                                                        key={t}
+                                                        onClick={() => updateType(i, t)}
+                                                        className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition capitalize ${photo.type === t
+                                                                ? TYPE_STYLES[t].active
+                                                                : TYPE_STYLES[t].inactive
+                                                            }`}
+                                                    >
+                                                        {t}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Remove */}
+                                        <button
+                                            onClick={() => remove(i)}
+                                            disabled={uploading}
+                                            className="p-2 rounded-lg transition flex-shrink-0"
+                                            style={{ color: "#94a3b8" }}
+                                            onMouseEnter={e => (e.currentTarget.style.color = "#ef4444")}
+                                            onMouseLeave={e => (e.currentTarget.style.color = "#94a3b8")}
+                                        >
+                                            <FaTrash className="text-sm" />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Upload progress */}
+                            {uploading && (
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-xs font-medium text-slate-500">
+                                        <span>Uploading...</span>
+                                        <span>{uploadedCount} / {pending.length}</span>
+                                    </div>
+                                    <div className="w-full h-2 rounded-full overflow-hidden" style={{ backgroundColor: "#e2e8f0" }}>
+                                        <div
+                                            className="h-full rounded-full transition-all duration-300"
+                                            style={{
+                                                width: `${(uploadedCount / pending.length) * 100}%`,
+                                                backgroundColor: "var(--color-amber)",
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            {error && <div className="alert-error">{error}</div>}
+
+                            {/* Actions */}
+                            <div
+                                className="flex gap-3 pt-2"
+                                style={{ borderTop: "1px solid #f1f5f9" }}
+                            >
+                                <button
+                                    onClick={handleUpload}
+                                    disabled={uploading}
+                                    className="btn-primary flex items-center gap-2"
+                                >
+                                    <FaUpload className="text-xs" />
+                                    {uploading
+                                        ? `Uploading ${uploadedCount + 1} of ${pending.length}...`
+                                        : `Upload ${pending.length} photo${pending.length !== 1 ? "s" : ""}`
+                                    }
                                 </button>
                             </div>
                         </div>

@@ -4,6 +4,24 @@ import { prisma } from "../../config/prisma.js";
 const ownedCustomer = (userId: string, customerId: string) =>
     prisma.customer.findFirst({ where: { id: customerId, userId } });
 
+export const fetchAllProjects = async (userId: string) => {
+    return await prisma.project.findMany({
+        where: { customer: { userId } },
+        orderBy: { createdAt: "desc" },
+        select: {
+            id: true,
+            name: true,
+            address: true,
+            createdAt: true,
+            customer: {
+                select: { id: true, name: true },
+            },
+            _count: { select: { photos: true } },
+        },
+    });
+};
+
+
 export const fetchProjects = async (userId: string, customerId: string) => {
     if (!await ownedCustomer(userId, customerId)) return null;
     return await prisma.project.findMany({
@@ -58,4 +76,23 @@ export const deleteProject = async (userId: string, customerId: string, projectI
     return await prisma.project.deleteMany({
         where: { id: projectId, customerId },
     });
+};
+
+export const getShareToken = async (userId: string, customerId: string, projectId: string) => {
+    if (!await ownedCustomer(userId, customerId)) return null;
+    const project = await prisma.project.findFirst({
+        where: { id: projectId, customerId },
+        select: { shareToken: true },
+    });
+    if (!project) return null;
+    // Generate one if missing
+    if (!project.shareToken) {
+        const updated = await prisma.project.update({
+            where: { id: projectId },
+            data: { shareToken: crypto.randomUUID() },
+            select: { shareToken: true },
+        });
+        return updated.shareToken;
+    }
+    return project.shareToken;
 };

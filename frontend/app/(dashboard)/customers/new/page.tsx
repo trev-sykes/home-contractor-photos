@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import Link from "next/link";
+import { FaUser, FaEnvelope, FaPhone } from "react-icons/fa";
 
 export default function NewCustomerPage() {
     const router = useRouter();
@@ -12,10 +13,7 @@ export default function NewCustomerPage() {
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async () => {
-        if (!form.name.trim()) {
-            setError("Customer name is required.");
-            return;
-        }
+        if (!form.name.trim()) { setError("Customer name is required."); return; }
         setLoading(true);
         setError("");
         try {
@@ -29,73 +27,109 @@ export default function NewCustomerPage() {
         }
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") handleSubmit();
+    };
+
     return (
-        <div className="min-h-screen bg-gray-100 p-8">
-            <div className="max-w-lg mx-auto">
-                <div className="mb-6">
-                    <Link href="/dashboard/customers" className="text-blue-600 hover:text-blue-800 text-sm">
-                        ← Back to Customers
-                    </Link>
+        <div className="page">
+            <div className="max-w-lg mx-auto space-y-6">
+
+                {/* Back */}
+                <Link
+                    href="/customers"
+                    className="inline-flex items-center gap-2 text-sm font-medium transition hover:opacity-70"
+                    style={{ color: "var(--color-text-faint)" }}
+                >
+                    ← Back to Customers
+                </Link>
+
+                {/* Header */}
+                <div>
+                    <p className="section-eyebrow">New</p>
+                    <h1 className="font-display text-4xl font-extrabold text-slate-900">
+                        Add Customer
+                    </h1>
+                    <p className="text-slate-500 text-sm mt-1">
+                        Fill in the details below to create a new customer.
+                    </p>
                 </div>
 
-                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
-                    <h1 className="text-2xl font-bold mb-6">New Customer</h1>
+                {/* Form Card */}
+                <div className="card card-body space-y-5">
 
-                    {error && (
-                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-5 text-sm">
-                            {error}
-                        </div>
-                    )}
+                    {error && <div className="alert-error">{error}</div>}
 
-                    <div className="space-y-5">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Name <span className="text-red-500">*</span>
-                            </label>
+                    <div>
+                        <label className="input-label">
+                            Name <span style={{ color: "var(--color-danger)" }}>*</span>
+                        </label>
+                        <div className="relative">
+                            <FaUser
+                                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs"
+                                style={{ color: "#94a3b8" }}
+                            />
                             <input
                                 type="text"
                                 placeholder="John Smith"
                                 value={form.name}
                                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onKeyDown={handleKeyDown}
+                                className="input pl-9"
                             />
                         </div>
+                    </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Email
-                            </label>
+                    <div>
+                        <label className="input-label">Email</label>
+                        <div className="relative">
+                            <FaEnvelope
+                                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs"
+                                style={{ color: "#94a3b8" }}
+                            />
                             <input
                                 type="email"
                                 placeholder="john@example.com"
                                 value={form.email}
                                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onKeyDown={handleKeyDown}
+                                className="input pl-9"
                             />
                         </div>
+                    </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Phone
-                            </label>
+                    <div>
+                        <label className="input-label">Phone</label>
+                        <div className="relative">
+                            <FaPhone
+                                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs"
+                                style={{ color: "#94a3b8" }}
+                            />
                             <input
                                 type="tel"
                                 placeholder="(555) 000-0000"
                                 value={form.phone}
                                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onKeyDown={handleKeyDown}
+                                className="input pl-9"
                             />
                         </div>
+                    </div>
 
+                    {/* Divider */}
+                    <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "0.5rem" }}>
                         <button
                             onClick={handleSubmit}
-                            disabled={loading}
-                            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 rounded-xl font-semibold transition"
+                            disabled={loading || !form.name.trim()}
+                            className="btn-primary w-full"
+                            style={{ padding: "0.875rem" }}
                         >
-                            {loading ? "Creating..." : "Create Customer"}
+                            {loading ? "Creating..." : "Create Customer →"}
                         </button>
                     </div>
+
                 </div>
+
             </div>
         </div>
     );

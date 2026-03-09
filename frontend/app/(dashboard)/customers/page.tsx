@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import Link from "next/link";
-import { FaUser, FaPlus } from "react-icons/fa";
+import { FaUser, FaPlus, FaArrowRight, FaSearch } from "react-icons/fa";
 
 interface Customer {
     id: string;
@@ -16,6 +16,7 @@ interface Customer {
 export default function CustomersPage() {
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState("");
 
     useEffect(() => {
         api.get("/api/customers")
@@ -24,65 +25,136 @@ export default function CustomersPage() {
             .finally(() => setLoading(false));
     }, []);
 
+    const filtered = customers.filter((c) =>
+        c.name.toLowerCase().includes(search.toLowerCase()) ||
+        c.email?.toLowerCase().includes(search.toLowerCase()) ||
+        c.phone?.includes(search)
+    );
+
     return (
-        <div className="min-h-screen bg-gray-100 p-8">
-            <div className="max-w-5xl mx-auto">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold">Customers</h1>
-                    <Link
-                        href="/dashboard/customers/new"
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold transition"
-                    >
-                        <FaPlus /> New Customer
+        <div className="page">
+            <div className="max-w-5xl mx-auto space-y-6">
+
+                {/* Header */}
+                <div className="flex justify-between items-start gap-4">
+                    <div>
+                        <p className="section-eyebrow">Directory</p>
+                        <h1 className="font-display text-4xl font-extrabold text-slate-900">
+                            Customers
+                        </h1>
+                        <p className="text-slate-500 text-sm mt-1">
+                            {loading ? "Loading..." : `${customers.length} customer${customers.length !== 1 ? "s" : ""} total`}
+                        </p>
+                    </div>
+                    <Link href="/customers/new" className="btn-primary flex-shrink-0">
+                        <FaPlus className="text-xs" /> New Customer
                     </Link>
                 </div>
 
+                {/* Search */}
+                {customers.length > 0 && (
+                    <div className="relative">
+                        <FaSearch
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-xs"
+                            style={{ color: "#94a3b8" }}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Search by name, email, or phone..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="input pl-10"
+                        />
+                    </div>
+                )}
+
+                {/* States */}
                 {loading ? (
-                    <p className="text-gray-500">Loading...</p>
+                    <div className="card card-body text-center py-16">
+                        <p style={{ color: "var(--color-text-faint)" }}>Loading...</p>
+                    </div>
+
                 ) : customers.length === 0 ? (
-                    <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
-                        <FaUser className="text-gray-300 text-6xl mx-auto mb-4" />
-                        <p className="text-gray-500 text-lg mb-4">No customers yet</p>
-                        <Link
-                            href="/customers/new"
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition"
+                    <div className="card card-body text-center py-20">
+                        <div
+                            className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                            style={{ backgroundColor: "#f1f5f9" }}
                         >
-                            Add your first customer
+                            <FaUser className="text-2xl" style={{ color: "#94a3b8" }} />
+                        </div>
+                        <p className="font-bold text-slate-700 text-lg mb-1">No customers yet</p>
+                        <p className="text-slate-500 text-sm mb-6">
+                            Add your first customer to start organizing projects and photos.
+                        </p>
+                        <Link href="/customers/new" className="btn-primary inline-flex mx-auto">
+                            <FaPlus className="text-xs" /> Add First Customer
                         </Link>
                     </div>
+
+                ) : filtered.length === 0 ? (
+                    <div className="card card-body text-center py-12">
+                        <p className="text-slate-500">No customers match your search.</p>
+                    </div>
+
                 ) : (
-                    <div className="grid gap-4">
-                        {customers.map((c) => (
-                            <div
+                    <div className="space-y-3">
+                        {filtered.map((c) => (
+                            <Link
                                 key={c.id}
-                                className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex justify-between items-center"
+                                href={`/customers/${c.id}`}
+                                className="card card-body flex items-center justify-between gap-4 hover:shadow-md transition group"
+                                style={{ padding: "1.25rem 1.5rem" }}
                             >
-                                <div className="flex items-center gap-4">
-                                    <div className="bg-blue-100 text-blue-600 rounded-full w-11 h-11 flex items-center justify-center font-bold text-lg">
+                                <div className="flex items-center gap-4 min-w-0">
+                                    {/* Avatar */}
+                                    <div
+                                        className="w-11 h-11 rounded-full flex items-center justify-center font-black text-lg flex-shrink-0"
+                                        style={{
+                                            backgroundColor: "rgba(251,191,36,0.12)",
+                                            color: "var(--color-amber-dark)",
+                                        }}
+                                    >
                                         {c.name.charAt(0).toUpperCase()}
                                     </div>
-                                    <div>
-                                        <p className="font-semibold text-gray-900">{c.name}</p>
-                                        <p className="text-sm text-gray-500">
-                                            {c.email ?? "No email"} {c.phone ? `• ${c.phone}` : ""}
+
+                                    {/* Info */}
+                                    <div className="min-w-0">
+                                        <p className="font-bold text-slate-800 group-hover:text-amber-600 transition truncate">
+                                            {c.name}
+                                        </p>
+                                        <p className="text-sm text-slate-400 truncate">
+                                            {c.email ?? "No email"}
+                                            {c.phone ? ` · ${c.phone}` : ""}
                                         </p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-6">
-                                    <span className="text-sm text-gray-400">
+
+                                <div className="flex items-center gap-6 flex-shrink-0">
+                                    <span
+                                        className="text-xs font-semibold px-3 py-1 rounded-full hidden sm:block"
+                                        style={{
+                                            backgroundColor: "#f1f5f9",
+                                            color: "#64748b",
+                                        }}
+                                    >
                                         {c._count.projects} project{c._count.projects !== 1 ? "s" : ""}
                                     </span>
-                                    <Link
-                                        href={`/customers/${c.id}`}
-                                        className="text-blue-600 hover:text-blue-800 font-medium text-sm transition"
-                                    >
-                                        View →
-                                    </Link>
+                                    <FaArrowRight
+                                        className="text-slate-300 group-hover:text-amber-400 transition text-sm"
+                                    />
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 )}
+
+                {/* Footer count */}
+                {!loading && filtered.length > 0 && search && (
+                    <p className="text-center text-xs" style={{ color: "var(--color-text-faint)" }}>
+                        Showing {filtered.length} of {customers.length} customers
+                    </p>
+                )}
+
             </div>
         </div>
     );

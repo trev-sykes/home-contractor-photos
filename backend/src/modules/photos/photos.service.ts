@@ -2,6 +2,26 @@ import { prisma } from "../../config/prisma.js";
 import { cloudinary } from "../../config/cloudinary.js";
 import "multer";
 
+export const fetchAllPhotos = async (userId: string) => {
+    return await prisma.photo.findMany({
+        where: { project: { customer: { userId } } },
+        orderBy: { createdAt: "desc" },
+        select: {
+            id: true,
+            imageUrl: true,
+            type: true,
+            createdAt: true,
+            project: {
+                select: {
+                    id: true,
+                    name: true,
+                    customer: { select: { id: true, name: true } },
+                },
+            },
+        },
+    });
+};
+
 const ownedProject = async (userId: string, customerId: string, projectId: string) => {
     const customer = await prisma.customer.findFirst({ where: { id: customerId, userId } });
     if (!customer) return false;
