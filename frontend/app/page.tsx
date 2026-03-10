@@ -488,23 +488,23 @@ export default function Home() {
             <div>
               <h4 className="font-bold text-white mb-3 sm:mb-4 text-xs sm:text-sm uppercase tracking-wider">Product</h4>
               <ul className="space-y-2 text-slate-500 text-sm">
-                <li><Link href="#" className="hover:text-amber-400 transition">Features</Link></li>
-                <li><Link href="#" className="hover:text-amber-400 transition">Pricing</Link></li>
+                <li><Link href="/features" className="hover:text-amber-400 transition">Features</Link></li>
+                <li><Link href="/pricing" className="hover:text-amber-400 transition">Pricing</Link></li>
                 <li><Link href="/register" className="hover:text-amber-400 transition">Get Started</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold text-white mb-3 sm:mb-4 text-xs sm:text-sm uppercase tracking-wider">Company</h4>
               <ul className="space-y-2 text-slate-500 text-sm">
-                <li><Link href="#" className="hover:text-amber-400 transition">About</Link></li>
-                <li><Link href="#" className="hover:text-amber-400 transition">Contact</Link></li>
+                <li><Link href="/about" className="hover:text-amber-400 transition">About</Link></li>
+                <li><Link href="/contact" className="hover:text-amber-400 transition">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold text-white mb-3 sm:mb-4 text-xs sm:text-sm uppercase tracking-wider">Legal</h4>
               <ul className="space-y-2 text-slate-500 text-sm">
-                <li><Link href="#" className="hover:text-amber-400 transition">Privacy Policy</Link></li>
-                <li><Link href="#" className="hover:text-amber-400 transition">Terms of Service</Link></li>
+                <li><Link href="/privacy" className="hover:text-amber-400 transition">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="hover:text-amber-400 transition">Terms of Service</Link></li>
               </ul>
             </div>
           </div>
