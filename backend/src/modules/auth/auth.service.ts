@@ -56,6 +56,7 @@ export const register = async (email: string, password: string, companyName: str
             companyName,
             trialEndsAt,
             subscriptionStatus: "trialing",
+            plan: "pro",
         },
     });
 

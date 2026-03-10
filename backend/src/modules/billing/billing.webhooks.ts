@@ -31,7 +31,9 @@ export const handleStripeWebhook = async (
             case "checkout.session.completed":
                 await handleCheckoutCompleted(event.data.object);
                 break;
-
+            case "invoice.payment_succeeded":
+                await handlePaymentSucceeded(event.data.object);
+                break;
             case "customer.subscription.updated":
             case "customer.subscription.deleted":
                 await handleSubscriptionUpdate(event.data.object);
@@ -84,5 +86,13 @@ const handlePaymentFailed = async (invoice: any) => {
         data: {
             subscriptionStatus: "past_due",
         },
+    });
+};
+
+const handlePaymentSucceeded = async (invoice: any) => {
+    if (invoice.billing_reason === "subscription_create") return; // handled by checkout.session.completed already
+    await prisma.user.update({
+        where: { stripeCustomerId: invoice.customer },
+        data: { subscriptionStatus: "active" },
     });
 };

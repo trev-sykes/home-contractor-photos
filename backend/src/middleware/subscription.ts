@@ -2,32 +2,15 @@
 import { prisma } from "../config/prisma.js";
 import type { Request, Response, NextFunction } from "express";
 
-export const requireSubscription = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    if (!req.userId) {
-        return res.status(401).json({ error: "Unauthorized" });
-    }
+export const requireSubscription = async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
 
-    const user = await prisma.user.findUnique({
-        where: { id: req.userId },
-    });
-
-    if (!user) {
-        return res.status(401).json({ error: "User not found" });
-    }
+    const user = await prisma.user.findUnique({ where: { id: req.userId } });
+    if (!user) return res.status(401).json({ error: "User not found" });
 
     const now = new Date();
-
-    const trialActive =
-        user.plan === "pro" &&
-        user.trialEndsAt &&
-        now < user.trialEndsAt;
-
-    const paidActive =
-        user.subscriptionStatus === "active";
+    const trialActive = user.trialEndsAt && now < user.trialEndsAt;
+    const paidActive = user.subscriptionStatus === "active";
 
     if (!trialActive && !paidActive) {
         return res.status(402).json({ error: "Subscription required" });
