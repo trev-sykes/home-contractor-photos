@@ -3,6 +3,7 @@ import { prisma } from "../../config/prisma.js";
 import { stripe } from "../../config/stripe.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { sendWelcomeEmail } from "../email/email.service.js";
 
 export const me = async (userId: string) => {
 
@@ -69,6 +70,7 @@ export const register = async (email: string, password: string, companyName: str
         where: { id: user.id },
         data: { stripeCustomerId: customer.id },
     });
+    await sendWelcomeEmail(user.email, companyName);
 
     return { user, customer };
 }

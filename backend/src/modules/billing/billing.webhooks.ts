@@ -2,6 +2,7 @@ import { env } from "../../config/env.js";
 import type { Request, Response } from "express";
 import { stripe } from "../../config/stripe.js";
 import { prisma } from "../../config/prisma.js";
+import { sendSubscriptionConfirmedEmail } from "../email/email.service.js";
 
 export const handleStripeWebhook = async (
     req: Request,
@@ -59,7 +60,7 @@ const handleCheckoutCompleted = async (session: any) => {
 
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
-    await prisma.user.update({
+    const user = await prisma.user.update({
         where: { stripeCustomerId: customerId },
         data: {
             subscriptionId: subscription.id,
@@ -67,6 +68,7 @@ const handleCheckoutCompleted = async (session: any) => {
             plan: "pro",
         },
     });
+    await sendSubscriptionConfirmedEmail(user.email, user.companyName);
 };
 const handleSubscriptionUpdate = async (subscription: any) => {
     await prisma.user.update({
