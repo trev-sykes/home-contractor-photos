@@ -17,3 +17,14 @@ api.interceptors.request.use((config) => {
     }
     return config;
 });
+
+// Handle 402 — subscription required
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 402) {
+            window.location.href = "/dashboard?upgrade=true";
+        }
+        return Promise.reject(error);
+    }
+);

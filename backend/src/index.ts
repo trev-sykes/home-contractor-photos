@@ -10,6 +10,7 @@ import billingRoutes from "./modules/billing/billing.routes.js";
 import welcomeRoutes from "./modules/welcome/welcome.routes.js";
 import settingsRoutes from "./modules/settings/settings.routes.js";
 import { handleStripeWebhook } from "./modules/billing/billing.webhooks.js";
+import { apiLimiter, authLimiter } from "./middleware/rateLimit.js";
 import { env } from "./config/env.js";
 
 const app = express();
@@ -23,6 +24,8 @@ app.use(
         credentials: true
     })
 );
+
+// Stripe webhook — must be before express.json()
 app.post(
     "/webhooks/stripe",
     express.raw({ type: "application/json" }),
@@ -31,7 +34,14 @@ app.post(
 
 app.use(express.json());
 
+// Auth routes — strict limiter (10 req / 15 min)
+app.use("/api/login", authLimiter);
+app.use("/api/register", authLimiter);
 
+// All other API routes — general limiter (100 req / 15 min)
+app.use("/api", apiLimiter);
+
+// Routes
 app.use("/api", authRoutes);
 app.use("/api", customersRoutes);
 app.use("/api", projectsRoutes);

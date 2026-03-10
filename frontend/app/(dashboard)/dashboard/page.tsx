@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import Link from "next/link";
 import {
@@ -13,6 +14,7 @@ export default function DashboardPage() {
     const [user, setUser] = useState<any>(null);
     const [stats, setStats] = useState({ customers: 0, projects: 0, photos: 0 });
     const [loading, setLoading] = useState(true);
+    const searchParams = useSearchParams();
 
     useEffect(() => {
         api.get("/api/me")
@@ -32,6 +34,13 @@ export default function DashboardPage() {
             });
         });
     }, []);
+
+    // Scroll to subscription banner if redirected here after a 402
+    useEffect(() => {
+        if (searchParams.get("upgrade") === "true") {
+            document.getElementById("subscription-banner")?.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [searchParams]);
 
     const trialActive = user?.trialEndsAt && new Date(user.trialEndsAt) > new Date();
     const subscribed = user?.subscriptionStatus === "active";
@@ -65,6 +74,7 @@ export default function DashboardPage() {
                 {/* Subscription Banners */}
                 {subStatus === "trial" && (
                     <div
+                        id="subscription-banner"
                         className="rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4"
                         style={{
                             backgroundColor: "rgba(251,191,36,0.08)",
@@ -89,7 +99,10 @@ export default function DashboardPage() {
                 )}
 
                 {subStatus === "inactive" && (
-                    <div className="rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 bg-red-50 border border-red-200">
+                    <div
+                        id="subscription-banner"
+                        className="rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 bg-red-50 border border-red-200"
+                    >
                         <div className="flex items-center gap-3">
                             <FaExclamationCircle className="text-red-500 text-xl flex-shrink-0" />
                             <div>

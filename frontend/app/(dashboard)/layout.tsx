@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { logout } from "@/lib/auth";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -79,7 +80,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 className="flex-1 overflow-auto pb-20 md:pb-0"
                 style={{ backgroundColor: "#f1f5f9" }}
             >
-                {children}
+                <Suspense fallback={null}>
+                    {children}
+                </Suspense>
             </main>
 
             {/* ── BOTTOM TAB BAR (mobile only) ── */}
