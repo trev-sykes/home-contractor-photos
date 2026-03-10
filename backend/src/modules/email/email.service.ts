@@ -1,4 +1,5 @@
 import { resend } from "../../config/resend.js";
+import { env } from "../../config/env.js";  // ← add this import
 
 export const sendWelcomeEmail = async (email: string, companyName: string) => {
     await resend.emails.send({
@@ -21,7 +22,7 @@ export const sendWelcomeEmail = async (email: string, companyName: string) => {
                     Start organizing your job site photos today.
                 </p>
 
-                <a href="${process.env.FRONTEND_URL}/dashboard"
+                <a href="${env.FRONTEND_URL}/dashboard"
                    style="display: inline-block; background: #fbbf24; color: #020617; font-weight: 700; font-size: 15px; padding: 14px 28px; border-radius: 12px; text-decoration: none;">
                     Go to Dashboard →
                 </a>
@@ -63,7 +64,7 @@ export const sendSubscriptionConfirmedEmail = async (email: string, companyName:
                     <li>All future features</li>
                 </ul>
 
-                <a href="${process.env.FRONTEND_URL}/dashboard"
+                <a href="${env.FRONTEND_URL}/dashboard"
                    style="display: inline-block; background: #fbbf24; color: #020617; font-weight: 700; font-size: 15px; padding: 14px 28px; border-radius: 12px; text-decoration: none;">
                     Go to Dashboard →
                 </a>
