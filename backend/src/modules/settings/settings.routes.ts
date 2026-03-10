@@ -8,5 +8,5 @@ const settingsRoutes = Router();
 settingsRoutes.get("/settings", requireAuth, settingsController.getSettings);
 settingsRoutes.post("/settings/logo", requireAuth, upload.single("logo"), settingsController.uploadLogoController);
 settingsRoutes.put("/settings", requireAuth, settingsController.updateSettingsController);
-
+settingsRoutes.delete("/settings/account", requireAuth, settingsController.deleteAccountController);
 export default settingsRoutes;

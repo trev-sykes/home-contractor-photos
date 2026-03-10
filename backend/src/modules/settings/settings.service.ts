@@ -1,5 +1,6 @@
 import { prisma } from "../../config/prisma.js";
 import { cloudinary } from "../../config/cloudinary.js";
+import { stripe } from "../../config/stripe.js";
 
 export const uploadLogo = async (userId: string, file: Express.Multer.File) => {
     const imageUrl = await new Promise<string>((resolve, reject) => {
@@ -33,4 +34,17 @@ export const updateSettings = async (userId: string, companyName: string) => {
         data: { companyName },
         select: { email: true, companyName: true, logoUrl: true },
     });
+};
+
+// settings.service.ts
+export const deleteAccount = async (userId: string) => {
+    // Cascade delete handled by Prisma (photos → projects → customers → user)
+    // Also cancel Stripe subscription if active
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+
+    if (user?.subscriptionId) {
+        await stripe.subscriptions.cancel(user.subscriptionId);
+    }
+
+    await prisma.user.delete({ where: { id: userId } });
 };

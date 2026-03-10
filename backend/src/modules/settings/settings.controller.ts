@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { uploadLogo, fetchSettings, updateSettings } from "./settings.service.js";
+import { uploadLogo, fetchSettings, updateSettings, deleteAccount } from "./settings.service.js";
 
 export const getSettings = async (req: Request, res: Response) => {
     if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
@@ -28,5 +28,16 @@ export const updateSettingsController = async (req: Request, res: Response) => {
         res.json(result);
     } catch (err) {
         res.status(500).json({ error: "Failed to update settings" });
+    }
+};
+
+export const deleteAccountController = async (req: Request, res: Response) => {
+    if (!req.userId) return res.status(401).json({ error: "Unauthorized" });
+    try {
+        await deleteAccount(req.userId);
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to delete account" });
     }
 };

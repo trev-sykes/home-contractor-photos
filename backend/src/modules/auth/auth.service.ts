@@ -45,16 +45,25 @@ export const login = async (email: string, password: string) => {
 
 export const register = async (email: string, password: string, companyName: string) => {
     const hashed = await bcrypt.hash(password, 10);
+
+    const trialEndsAt = new Date();
+    trialEndsAt.setDate(trialEndsAt.getDate() + 14);
+
     const user = await prisma.user.create({
-        data: { email, password: hashed, companyName },
-    });
-    // 2️⃣ Create the Stripe customer
-    const customer = await stripe.customers.create({
-        email: user.email,
-        name: companyName, // optional but recommended
+        data: {
+            email,
+            password: hashed,
+            companyName,
+            trialEndsAt,
+            subscriptionStatus: "trialing",
+        },
     });
 
-    // 3️⃣ Save the Stripe customer ID in your DB
+    const customer = await stripe.customers.create({
+        email: user.email,
+        name: companyName,
+    });
+
     await prisma.user.update({
         where: { id: user.id },
         data: { stripeCustomerId: customer.id },
