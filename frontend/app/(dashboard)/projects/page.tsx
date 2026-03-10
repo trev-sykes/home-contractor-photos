@@ -34,12 +34,14 @@ export default function ProjectsPage() {
 
     return (
         <div className="page">
-            <div className="max-w-5xl mx-auto space-y-6">
+            <div className="max-w-5xl mx-auto space-y-5 sm:space-y-6">
 
                 {/* Header */}
                 <div>
                     <p className="section-eyebrow">Overview</p>
-                    <h1 className="font-display text-4xl font-extrabold text-slate-900">Projects</h1>
+                    <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-slate-900">
+                        Projects
+                    </h1>
                     <p className="text-slate-500 text-sm mt-1">
                         {loading ? "Loading..." : `${projects.length} project${projects.length !== 1 ? "s" : ""} across all customers`}
                     </p>
@@ -54,7 +56,7 @@ export default function ProjectsPage() {
                         />
                         <input
                             type="text"
-                            placeholder="Search by project name, customer, or address..."
+                            placeholder="Search projects..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="input pl-10"
@@ -69,7 +71,7 @@ export default function ProjectsPage() {
                     </div>
 
                 ) : projects.length === 0 ? (
-                    <div className="card card-body text-center py-20">
+                    <div className="card card-body text-center py-16 sm:py-20">
                         <div
                             className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
                             style={{ backgroundColor: "#f1f5f9" }}
@@ -77,7 +79,7 @@ export default function ProjectsPage() {
                             <FaFolder className="text-2xl" style={{ color: "#94a3b8" }} />
                         </div>
                         <p className="font-bold text-slate-700 text-lg mb-1">No projects yet</p>
-                        <p className="text-slate-500 text-sm mb-6">
+                        <p className="text-slate-500 text-sm mb-6 px-4">
                             Create a customer first, then add projects to them.
                         </p>
                         <Link href="/customers" className="btn-primary inline-flex mx-auto">
@@ -91,37 +93,37 @@ export default function ProjectsPage() {
                     </div>
 
                 ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-2 sm:space-y-3">
                         {filtered.map((p) => (
                             <Link
                                 key={p.id}
                                 href={`/customers/${p.customer.id}/projects/${p.id}`}
-                                className="card card-body flex items-center justify-between gap-4 hover:shadow-md transition group"
-                                style={{ padding: "1.25rem 1.5rem" }}
+                                className="card card-body flex items-center justify-between gap-3 sm:gap-4 hover:shadow-md transition group"
+                                style={{ padding: "1rem 1.25rem" }}
                             >
-                                <div className="flex items-center gap-4 min-w-0">
+                                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                                     {/* Icon */}
                                     <div
-                                        className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                                        className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0"
                                         style={{ backgroundColor: "#f0fdf4" }}
                                     >
-                                        <FaFolder className="text-base" style={{ color: "#22c55e" }} />
+                                        <FaFolder className="text-sm sm:text-base" style={{ color: "#22c55e" }} />
                                     </div>
 
                                     {/* Info */}
                                     <div className="min-w-0">
-                                        <p className="font-bold text-slate-800 group-hover:text-amber-600 transition truncate">
+                                        <p className="font-bold text-slate-800 group-hover:text-amber-600 transition truncate text-sm sm:text-base">
                                             {p.name}
                                         </p>
-                                        <div className="flex flex-wrap items-center gap-3 mt-0.5">
-                                            <span className="flex items-center gap-1.5 text-xs text-slate-400">
+                                        <div className="flex items-center gap-2 mt-0.5 min-w-0">
+                                            <span className="flex items-center gap-1 text-xs text-slate-400 flex-shrink-0">
                                                 <FaUser className="text-xs" />
-                                                {p.customer.name}
+                                                <span className="truncate max-w-[100px] sm:max-w-none">{p.customer.name}</span>
                                             </span>
                                             {p.address && (
-                                                <span className="flex items-center gap-1.5 text-xs text-slate-400">
-                                                    <FaMapMarkerAlt className="text-xs" />
-                                                    {p.address}
+                                                <span className="hidden sm:flex items-center gap-1.5 text-xs text-slate-400">
+                                                    <FaMapMarkerAlt className="text-xs flex-shrink-0" />
+                                                    <span className="truncate">{p.address}</span>
                                                 </span>
                                             )}
                                         </div>
@@ -129,7 +131,7 @@ export default function ProjectsPage() {
                                 </div>
 
                                 {/* Meta + arrow */}
-                                <div className="flex items-center gap-6 flex-shrink-0">
+                                <div className="flex items-center gap-3 sm:gap-6 flex-shrink-0">
                                     <div className="text-right hidden sm:block">
                                         <p className="text-xs text-slate-400">
                                             {new Date(p.createdAt).toLocaleDateString("en-US", {
@@ -141,9 +143,7 @@ export default function ProjectsPage() {
                                             {p._count.photos} photo{p._count.photos !== 1 ? "s" : ""}
                                         </p>
                                     </div>
-                                    <FaArrowRight
-                                        className="text-slate-300 group-hover:text-amber-400 transition text-sm"
-                                    />
+                                    <FaArrowRight className="text-slate-300 group-hover:text-amber-400 transition text-sm" />
                                 </div>
                             </Link>
                         ))}

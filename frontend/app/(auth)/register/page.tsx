@@ -50,20 +50,20 @@ export default function RegisterPage() {
             <div className="relative w-full max-w-md">
 
                 {/* Logo + heading */}
-                <div className="flex flex-col items-center mb-10">
-                    <Link href="/" className="flex items-center gap-2.5 mb-8">
+                <div className="flex flex-col items-center mb-8 sm:mb-10">
+                    <Link href="/" className="flex items-center gap-2.5 mb-6 sm:mb-8">
                         <div
-                            className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm"
+                            className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm flex-shrink-0"
                             style={{ backgroundColor: "var(--color-amber)", color: "var(--color-bg)" }}
                         >
                             HC
                         </div>
-                        <span className="font-bold text-lg" style={{ color: "var(--color-text)" }}>
+                        <span className="font-bold text-base sm:text-lg" style={{ color: "var(--color-text)" }}>
                             Home Contractor Photos
                         </span>
                     </Link>
                     <h1
-                        className="font-display text-4xl font-extrabold mb-2 text-center"
+                        className="font-display text-3xl sm:text-4xl font-extrabold mb-2 text-center"
                         style={{ color: "var(--color-text)" }}
                     >
                         Start your free trial.
@@ -75,7 +75,7 @@ export default function RegisterPage() {
 
                 {/* Card */}
                 <div
-                    className="rounded-2xl p-8"
+                    className="rounded-2xl p-6 sm:p-8"
                     style={{
                         backgroundColor: "var(--color-surface)",
                         border: "1px solid var(--color-border-subtle)",
@@ -93,6 +93,8 @@ export default function RegisterPage() {
                                 onChange={(e) => setForm({ ...form, companyName: e.target.value })}
                                 onKeyDown={handleKeyDown}
                                 className="input-dark"
+                                autoComplete="organization"
+                                autoCapitalize="words"
                             />
                         </div>
 
@@ -105,6 +107,8 @@ export default function RegisterPage() {
                                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                                 onKeyDown={handleKeyDown}
                                 className="input-dark"
+                                autoComplete="email"
+                                autoCapitalize="none"
                             />
                         </div>
 
@@ -117,8 +121,8 @@ export default function RegisterPage() {
                                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                                 onKeyDown={handleKeyDown}
                                 className="input-dark"
+                                autoComplete="new-password"
                             />
-                            {/* Password strength indicator */}
                             {form.password.length > 0 && (
                                 <div className="mt-2 flex gap-1">
                                     {[1, 2, 3].map((level) => (
@@ -142,16 +146,16 @@ export default function RegisterPage() {
                         <button
                             onClick={handleRegister}
                             disabled={loading || !filled}
-                            className="btn-primary w-full mt-2"
+                            className="btn-primary w-full"
                             style={{ padding: "0.875rem" }}
                         >
                             {loading ? "Creating account..." : "Create Free Account →"}
                         </button>
                     </div>
 
-                    {/* Divider with trust signals */}
+                    {/* Trust signals */}
                     <div className="mt-6 pt-6" style={{ borderTop: "1px solid var(--color-border-subtle)" }}>
-                        <div className="flex justify-center gap-6 text-xs" style={{ color: "var(--color-text-faint)" }}>
+                        <div className="flex justify-center gap-4 sm:gap-6 text-xs flex-wrap" style={{ color: "var(--color-text-faint)" }}>
                             {["14-day free trial", "No credit card", "Cancel anytime"].map((item) => (
                                 <div key={item} className="flex items-center gap-1">
                                     <span style={{ color: "var(--color-success)" }}>✓</span>

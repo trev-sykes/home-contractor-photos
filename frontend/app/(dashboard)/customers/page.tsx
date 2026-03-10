@@ -33,13 +33,13 @@ export default function CustomersPage() {
 
     return (
         <div className="page">
-            <div className="max-w-5xl mx-auto space-y-6">
+            <div className="max-w-5xl mx-auto space-y-5 sm:space-y-6">
 
                 {/* Header */}
                 <div className="flex justify-between items-start gap-4">
                     <div>
                         <p className="section-eyebrow">Directory</p>
-                        <h1 className="font-display text-4xl font-extrabold text-slate-900">
+                        <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-slate-900">
                             Customers
                         </h1>
                         <p className="text-slate-500 text-sm mt-1">
@@ -47,7 +47,9 @@ export default function CustomersPage() {
                         </p>
                     </div>
                     <Link href="/customers/new" className="btn-primary flex-shrink-0">
-                        <FaPlus className="text-xs" /> New Customer
+                        <FaPlus className="text-xs" />
+                        <span className="hidden sm:inline">New Customer</span>
+                        <span className="sm:hidden">New</span>
                     </Link>
                 </div>
 
@@ -60,7 +62,7 @@ export default function CustomersPage() {
                         />
                         <input
                             type="text"
-                            placeholder="Search by name, email, or phone..."
+                            placeholder="Search customers..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="input pl-10"
@@ -75,7 +77,7 @@ export default function CustomersPage() {
                     </div>
 
                 ) : customers.length === 0 ? (
-                    <div className="card card-body text-center py-20">
+                    <div className="card card-body text-center py-16 sm:py-20">
                         <div
                             className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
                             style={{ backgroundColor: "#f1f5f9" }}
@@ -83,7 +85,7 @@ export default function CustomersPage() {
                             <FaUser className="text-2xl" style={{ color: "#94a3b8" }} />
                         </div>
                         <p className="font-bold text-slate-700 text-lg mb-1">No customers yet</p>
-                        <p className="text-slate-500 text-sm mb-6">
+                        <p className="text-slate-500 text-sm mb-6 px-4">
                             Add your first customer to start organizing projects and photos.
                         </p>
                         <Link href="/customers/new" className="btn-primary inline-flex mx-auto">
@@ -97,18 +99,18 @@ export default function CustomersPage() {
                     </div>
 
                 ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-2 sm:space-y-3">
                         {filtered.map((c) => (
                             <Link
                                 key={c.id}
                                 href={`/customers/${c.id}`}
-                                className="card card-body flex items-center justify-between gap-4 hover:shadow-md transition group"
-                                style={{ padding: "1.25rem 1.5rem" }}
+                                className="card card-body flex items-center justify-between gap-3 sm:gap-4 hover:shadow-md transition group"
+                                style={{ padding: "1rem 1.25rem" }}
                             >
-                                <div className="flex items-center gap-4 min-w-0">
+                                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                                     {/* Avatar */}
                                     <div
-                                        className="w-11 h-11 rounded-full flex items-center justify-center font-black text-lg flex-shrink-0"
+                                        className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center font-black text-base sm:text-lg flex-shrink-0"
                                         style={{
                                             backgroundColor: "rgba(251,191,36,0.12)",
                                             color: "var(--color-amber-dark)",
@@ -119,29 +121,24 @@ export default function CustomersPage() {
 
                                     {/* Info */}
                                     <div className="min-w-0">
-                                        <p className="font-bold text-slate-800 group-hover:text-amber-600 transition truncate">
+                                        <p className="font-bold text-slate-800 group-hover:text-amber-600 transition truncate text-sm sm:text-base">
                                             {c.name}
                                         </p>
-                                        <p className="text-sm text-slate-400 truncate">
+                                        <p className="text-xs sm:text-sm text-slate-400 truncate">
                                             {c.email ?? "No email"}
                                             {c.phone ? ` · ${c.phone}` : ""}
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-6 flex-shrink-0">
+                                <div className="flex items-center gap-3 sm:gap-6 flex-shrink-0">
                                     <span
-                                        className="text-xs font-semibold px-3 py-1 rounded-full hidden sm:block"
-                                        style={{
-                                            backgroundColor: "#f1f5f9",
-                                            color: "#64748b",
-                                        }}
+                                        className="text-xs font-semibold px-2.5 py-1 rounded-full hidden sm:block"
+                                        style={{ backgroundColor: "#f1f5f9", color: "#64748b" }}
                                     >
                                         {c._count.projects} project{c._count.projects !== 1 ? "s" : ""}
                                     </span>
-                                    <FaArrowRight
-                                        className="text-slate-300 group-hover:text-amber-400 transition text-sm"
-                                    />
+                                    <FaArrowRight className="text-slate-300 group-hover:text-amber-400 transition text-sm" />
                                 </div>
                             </Link>
                         ))}

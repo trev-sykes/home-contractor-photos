@@ -84,19 +84,21 @@ export default function SettingsPage() {
 
     return (
         <div className="page">
-            <div className="max-w-2xl mx-auto space-y-8">
+            <div className="max-w-2xl mx-auto space-y-6 sm:space-y-8">
 
                 {/* Header */}
                 <div>
                     <p className="section-eyebrow">Account</p>
-                    <h1 className="font-display text-4xl font-extrabold text-slate-900">Settings</h1>
+                    <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-slate-900">
+                        Settings
+                    </h1>
                     <p className="text-slate-500 text-sm mt-1">
                         Manage your company details and branding.
                     </p>
                 </div>
 
                 {/* Logo Card */}
-                <div className="card card-body space-y-6">
+                <div className="card card-body space-y-5 sm:space-y-6">
                     <div>
                         <h2 className="font-bold text-slate-800 text-lg">Company Logo</h2>
                         <p className="text-slate-500 text-sm mt-1">
@@ -104,30 +106,27 @@ export default function SettingsPage() {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-6">
-                        {/* Preview circle */}
+                    <div className="flex items-center gap-5 sm:gap-6">
+                        {/* Preview */}
                         <div
                             onClick={() => fileInputRef.current?.click()}
-                            className="w-24 h-24 rounded-2xl overflow-hidden flex items-center justify-center flex-shrink-0 cursor-pointer transition"
-                            style={{
-                                border: "2px dashed #cbd5e1",
-                                backgroundColor: "#f8fafc",
-                            }}
+                            className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden flex items-center justify-center flex-shrink-0 cursor-pointer transition"
+                            style={{ border: "2px dashed #cbd5e1", backgroundColor: "#f8fafc" }}
                             onMouseEnter={e => (e.currentTarget.style.borderColor = "var(--color-amber)")}
                             onMouseLeave={e => (e.currentTarget.style.borderColor = "#cbd5e1")}
                         >
                             {logoPreview ? (
                                 <img src={logoPreview} alt="Logo" className="w-full h-full object-cover" />
                             ) : (
-                                <FaCamera className="text-3xl" style={{ color: "#cbd5e1" }} />
+                                <FaCamera className="text-2xl sm:text-3xl" style={{ color: "#cbd5e1" }} />
                             )}
                         </div>
 
-                        <div className="space-y-2">
+                        <div className="space-y-2 min-w-0">
                             <button
                                 onClick={() => fileInputRef.current?.click()}
                                 disabled={logoUploading}
-                                className="btn-primary"
+                                className="btn-primary w-full sm:w-auto"
                             >
                                 {logoUploading
                                     ? "Uploading..."
@@ -157,7 +156,7 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Company Details Card */}
-                <div className="card card-body space-y-6">
+                <div className="card card-body space-y-5 sm:space-y-6">
                     <div>
                         <h2 className="font-bold text-slate-800 text-lg">Company Details</h2>
                         <p className="text-slate-500 text-sm mt-1">
@@ -167,7 +166,6 @@ export default function SettingsPage() {
 
                     <div className="space-y-4">
 
-                        {/* Email — read only */}
                         <div>
                             <label className="input-label">Email</label>
                             <div className="relative">
@@ -189,7 +187,6 @@ export default function SettingsPage() {
                             </div>
                         </div>
 
-                        {/* Company name */}
                         <div>
                             <label className="input-label">Company Name</label>
                             <div className="relative">
@@ -204,17 +201,19 @@ export default function SettingsPage() {
                                     onKeyDown={(e) => e.key === "Enter" && handleSave()}
                                     className="input pl-9"
                                     placeholder="Smith Roofing Co."
+                                    autoCapitalize="words"
+                                    autoComplete="organization"
                                 />
                             </div>
                         </div>
 
                         {saveError && <div className="alert-error">{saveError}</div>}
 
-                        <div className="flex items-center gap-4 pt-1">
+                        <div className="flex flex-wrap items-center gap-4 pt-1">
                             <button
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="btn-primary"
+                                className="btn-primary w-full sm:w-auto"
                             >
                                 {saving ? "Saving..." : "Save Changes"}
                             </button>

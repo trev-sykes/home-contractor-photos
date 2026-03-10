@@ -31,49 +31,52 @@ export default function LoginPage() {
 
     return (
         <div
-            className="min-h-screen flex items-center justify-center px-4"
+            className="min-h-screen flex items-center justify-center px-4 py-12"
             style={{ backgroundColor: "var(--color-bg)" }}
         >
             {/* Ambient glow */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full blur-3xl"
-                    style={{ backgroundColor: "rgba(251,191,36,0.06)" }} />
+                <div
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full blur-3xl"
+                    style={{ backgroundColor: "rgba(251,191,36,0.06)" }}
+                />
             </div>
 
             <div className="relative w-full max-w-md">
 
-                {/* Logo mark */}
-                <div className="flex flex-col items-center mb-10">
-                    <Link href="/" className="flex items-center gap-2.5 mb-8">
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm"
-                            style={{ backgroundColor: "var(--color-amber)", color: "var(--color-bg)" }}>
+                {/* Logo + heading */}
+                <div className="flex flex-col items-center mb-8 sm:mb-10">
+                    <Link href="/" className="flex items-center gap-2.5 mb-6 sm:mb-8">
+                        <div
+                            className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm flex-shrink-0"
+                            style={{ backgroundColor: "var(--color-amber)", color: "var(--color-bg)" }}
+                        >
                             HC
                         </div>
-                        <span className="font-bold text-lg" style={{ color: "var(--color-text)" }}>
+                        <span className="font-bold text-base sm:text-lg" style={{ color: "var(--color-text)" }}>
                             Home Contractor Photos
                         </span>
                     </Link>
-                    <h1 className="font-display text-4xl font-extrabold mb-2"
-                        style={{ color: "var(--color-text)" }}>
+                    <h1
+                        className="font-display text-3xl sm:text-4xl font-extrabold mb-2 text-center"
+                        style={{ color: "var(--color-text)" }}
+                    >
                         Welcome back.
                     </h1>
-                    <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
+                    <p className="text-sm text-center" style={{ color: "var(--color-text-muted)" }}>
                         Sign in to your account to continue
                     </p>
                 </div>
 
                 {/* Card */}
-                <div className="rounded-2xl p-8"
+                <div
+                    className="rounded-2xl p-6 sm:p-8"
                     style={{
                         backgroundColor: "var(--color-surface)",
-                        border: "1px solid var(--color-border-subtle)"
-                    }}>
-
-                    {error && (
-                        <div className="alert-error mb-6">
-                            {error}
-                        </div>
-                    )}
+                        border: "1px solid var(--color-border-subtle)",
+                    }}
+                >
+                    {error && <div className="alert-error mb-6">{error}</div>}
 
                     <div className="space-y-5">
                         <div>
@@ -85,6 +88,8 @@ export default function LoginPage() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 className="input-dark"
+                                autoComplete="email"
+                                autoCapitalize="none"
                             />
                         </div>
 
@@ -93,9 +98,11 @@ export default function LoginPage() {
                                 <label className="input-label-dark" style={{ marginBottom: 0 }}>
                                     Password
                                 </label>
-                                <Link href="/forgot-password"
+                                <Link
+                                    href="/forgot-password"
                                     className="text-xs font-medium transition hover:opacity-80"
-                                    style={{ color: "var(--color-amber)" }}>
+                                    style={{ color: "var(--color-amber)" }}
+                                >
                                     Forgot password?
                                 </Link>
                             </div>
@@ -106,13 +113,14 @@ export default function LoginPage() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 className="input-dark"
+                                autoComplete="current-password"
                             />
                         </div>
 
                         <button
                             onClick={handleLogin}
                             disabled={loading || !email || !password}
-                            className="btn-primary w-full mt-2"
+                            className="btn-primary w-full"
                             style={{ padding: "0.875rem" }}
                         >
                             {loading ? "Signing in..." : "Sign In →"}
@@ -120,20 +128,22 @@ export default function LoginPage() {
                     </div>
                 </div>
 
-                {/* Footer */}
+                {/* Footer links */}
                 <p className="text-center text-sm mt-6" style={{ color: "var(--color-text-faint)" }}>
                     Don't have an account?{" "}
-                    <Link href="/register"
+                    <Link
+                        href="/register"
                         className="font-semibold transition hover:opacity-80"
-                        style={{ color: "var(--color-amber)" }}>
+                        style={{ color: "var(--color-amber)" }}
+                    >
                         Start free trial
                     </Link>
                 </p>
 
-                {/* Trust line */}
-                <p className="text-center text-xs mt-4" style={{ color: "var(--color-text-faint)" }}>
+                <p className="text-center text-xs mt-3" style={{ color: "var(--color-text-faint)" }}>
                     14-day free trial · No credit card needed
                 </p>
+
             </div>
         </div>
     );

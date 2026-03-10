@@ -76,7 +76,6 @@ export default function ProjectPage() {
             .finally(() => setLoading(false));
     }, [id, projectId]);
 
-    // Close lightbox on Escape
     useEffect(() => {
         const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setLightbox(null); };
         window.addEventListener("keydown", handler);
@@ -128,7 +127,7 @@ export default function ProjectPage() {
 
     return (
         <div className="page">
-            <div className="max-w-4xl mx-auto space-y-6">
+            <div className="max-w-4xl mx-auto space-y-5 sm:space-y-6">
 
                 {/* Back */}
                 <Link
@@ -143,7 +142,7 @@ export default function ProjectPage() {
                 <div className="card card-body">
                     {editing ? (
                         <div className="space-y-5">
-                            <h2 className="font-display text-2xl font-extrabold text-slate-800">
+                            <h2 className="font-display text-xl sm:text-2xl font-extrabold text-slate-800">
                                 Edit Project
                             </h2>
 
@@ -159,6 +158,7 @@ export default function ProjectPage() {
                                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                                     onKeyDown={(e) => e.key === "Enter" && handleSave()}
                                     className="input"
+                                    autoCapitalize="words"
                                 />
                             </div>
                             <div>
@@ -169,95 +169,105 @@ export default function ProjectPage() {
                                     onChange={(e) => setForm({ ...form, address: e.target.value })}
                                     onKeyDown={(e) => e.key === "Enter" && handleSave()}
                                     className="input"
+                                    autoCapitalize="words"
+                                    autoComplete="street-address"
                                 />
                             </div>
                             <div
                                 className="flex gap-3 pt-2"
                                 style={{ borderTop: "1px solid #f1f5f9" }}
                             >
-                                <button onClick={handleSave} disabled={saving} className="btn-primary">
+                                <button onClick={handleSave} disabled={saving} className="btn-primary flex-1 sm:flex-none">
                                     {saving ? "Saving..." : "Save Changes"}
                                 </button>
                                 <button
                                     onClick={() => { setEditing(false); setEditError(""); }}
-                                    className="btn-secondary"
+                                    className="btn-secondary flex-1 sm:flex-none"
                                 >
                                     Cancel
                                 </button>
                             </div>
                         </div>
                     ) : (
-                        <div className="flex justify-between items-start gap-4 flex-wrap">
-                            <div>
-                                <h1 className="font-display text-3xl font-extrabold text-slate-900">
+                        <div className="space-y-4">
+                            {/* Title + actions row */}
+                            <div className="flex items-start justify-between gap-3">
+                                <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
                                     {project.name}
                                 </h1>
-                                <div className="flex flex-wrap items-center gap-4 mt-2">
-                                    {project.address && (
-                                        <span className="flex items-center gap-1.5 text-sm text-slate-400">
-                                            <FaMapMarkerAlt className="text-xs" />
-                                            {project.address}
-                                        </span>
-                                    )}
-                                    <span className="flex items-center gap-1.5 text-sm text-slate-400">
-                                        <FaCalendarAlt className="text-xs" />
-                                        {new Date(project.createdAt).toLocaleDateString("en-US", {
-                                            month: "long", day: "numeric", year: "numeric"
-                                        })}
-                                    </span>
-                                    <span
-                                        className="text-xs font-semibold px-2.5 py-1 rounded-full"
-                                        style={{ backgroundColor: "#f1f5f9", color: "#64748b" }}
+
+                                {/* Actions — icon only on mobile */}
+                                <div className="flex gap-2 flex-shrink-0">
+                                    <button
+                                        onClick={handleShare}
+                                        disabled={shareLoading}
+                                        className="btn-sm flex items-center gap-1.5 transition"
+                                        style={{
+                                            border: "1px solid rgba(251,191,36,0.4)",
+                                            color: "var(--color-amber-dark)",
+                                            borderRadius: "0.75rem",
+                                            padding: "0.375rem 0.75rem",
+                                            fontWeight: 600,
+                                            fontSize: "0.75rem",
+                                            backgroundColor: "rgba(251,191,36,0.08)",
+                                        }}
                                     >
-                                        {project.photos.length} photo{project.photos.length !== 1 ? "s" : ""}
-                                    </span>
+                                        {shareCopied
+                                            ? <><FaCheck className="text-xs" /><span className="hidden sm:inline"> Copied!</span></>
+                                            : <><FaShare className="text-xs" /><span className="hidden sm:inline"> {shareLoading ? "Getting..." : "Share"}</span></>
+                                        }
+                                    </button>
+                                    <button
+                                        onClick={() => setEditing(true)}
+                                        className="btn-secondary btn-sm flex items-center gap-1.5"
+                                    >
+                                        <FaEdit className="text-xs" />
+                                        <span className="hidden sm:inline">Edit</span>
+                                    </button>
+                                    <button
+                                        onClick={() => setConfirmDelete(true)}
+                                        className="btn-sm flex items-center gap-1.5 transition"
+                                        style={{
+                                            border: "1px solid #fecaca",
+                                            color: "#dc2626",
+                                            borderRadius: "0.75rem",
+                                            padding: "0.375rem 0.75rem",
+                                            fontWeight: 600,
+                                            fontSize: "0.75rem",
+                                            backgroundColor: "transparent",
+                                        }}
+                                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#fef2f2")}
+                                        onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
+                                    >
+                                        <FaTrash className="text-xs" />
+                                        <span className="hidden sm:inline">Delete</span>
+                                    </button>
                                 </div>
                             </div>
 
-                            {/* Actions */}
-                            <div className="flex gap-2 flex-wrap">
-                                <button
-                                    onClick={handleShare}
-                                    disabled={shareLoading}
-                                    className="btn-sm flex items-center gap-2 transition"
-                                    style={{
-                                        border: "1px solid rgba(251,191,36,0.4)",
-                                        color: "var(--color-amber-dark)",
-                                        borderRadius: "0.75rem",
-                                        padding: "0.375rem 0.875rem",
-                                        fontWeight: 600,
-                                        fontSize: "0.75rem",
-                                        backgroundColor: "rgba(251,191,36,0.08)",
-                                    }}
+                            {/* Meta row */}
+                            <div
+                                className="flex flex-wrap items-center gap-3 sm:gap-4 pt-3"
+                                style={{ borderTop: "1px solid #f1f5f9" }}
+                            >
+                                {project.address && (
+                                    <span className="flex items-center gap-1.5 text-sm text-slate-400">
+                                        <FaMapMarkerAlt className="text-xs flex-shrink-0" />
+                                        {project.address}
+                                    </span>
+                                )}
+                                <span className="flex items-center gap-1.5 text-sm text-slate-400">
+                                    <FaCalendarAlt className="text-xs flex-shrink-0" />
+                                    {new Date(project.createdAt).toLocaleDateString("en-US", {
+                                        month: "short", day: "numeric", year: "numeric"
+                                    })}
+                                </span>
+                                <span
+                                    className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                                    style={{ backgroundColor: "#f1f5f9", color: "#64748b" }}
                                 >
-                                    {shareCopied
-                                        ? <><FaCheck className="text-xs" /> Copied!</>
-                                        : <><FaShare className="text-xs" /> {shareLoading ? "Getting link..." : "Share"}</>
-                                    }
-                                </button>
-                                <button
-                                    onClick={() => setEditing(true)}
-                                    className="btn-secondary btn-sm flex items-center gap-2"
-                                >
-                                    <FaEdit className="text-xs" /> Edit
-                                </button>
-                                <button
-                                    onClick={() => setConfirmDelete(true)}
-                                    className="btn-sm flex items-center gap-2 transition"
-                                    style={{
-                                        border: "1px solid #fecaca",
-                                        color: "#dc2626",
-                                        borderRadius: "0.75rem",
-                                        padding: "0.375rem 0.875rem",
-                                        fontWeight: 600,
-                                        fontSize: "0.75rem",
-                                        backgroundColor: "transparent",
-                                    }}
-                                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#fef2f2")}
-                                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
-                                >
-                                    <FaTrash className="text-xs" /> Delete
-                                </button>
+                                    {project.photos.length} photo{project.photos.length !== 1 ? "s" : ""}
+                                </span>
                             </div>
                         </div>
                     )}
@@ -265,16 +275,16 @@ export default function ProjectPage() {
 
                 {/* Delete Confirmation */}
                 {confirmDelete && (
-                    <div className="rounded-2xl p-6 bg-red-50 border border-red-200">
+                    <div className="rounded-2xl p-5 sm:p-6 bg-red-50 border border-red-200">
                         <p className="font-bold text-red-800 mb-1">Delete {project.name}?</p>
                         <p className="text-red-600 text-sm mb-4">
                             This will permanently delete the project and all its photos. This cannot be undone.
                         </p>
                         <div className="flex gap-3">
-                            <button onClick={handleDelete} disabled={deleting} className="btn-danger btn-sm">
+                            <button onClick={handleDelete} disabled={deleting} className="btn-danger btn-sm flex-1 sm:flex-none">
                                 {deleting ? "Deleting..." : "Yes, delete"}
                             </button>
-                            <button onClick={() => setConfirmDelete(false)} className="btn-secondary btn-sm">
+                            <button onClick={() => setConfirmDelete(false)} className="btn-secondary btn-sm flex-1 sm:flex-none">
                                 Cancel
                             </button>
                         </div>
@@ -282,19 +292,23 @@ export default function ProjectPage() {
                 )}
 
                 {/* Photos Section */}
-                <div className="card card-body space-y-6">
+                <div className="card card-body space-y-5 sm:space-y-6">
                     <div className="flex justify-between items-center">
-                        <h2 className="font-display text-2xl font-extrabold text-slate-900">Photos</h2>
+                        <h2 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900">
+                            Photos
+                        </h2>
                         <Link
                             href={`/customers/${id}/projects/${projectId}/upload`}
-                            className="btn-primary btn-sm flex items-center gap-2"
+                            className="btn-primary btn-sm flex items-center gap-1.5"
                         >
-                            <FaCamera className="text-xs" /> Upload Photos
+                            <FaCamera className="text-xs" />
+                            <span className="hidden sm:inline">Upload Photos</span>
+                            <span className="sm:hidden">Upload</span>
                         </Link>
                     </div>
 
                     {project.photos.length === 0 ? (
-                        <div className="text-center py-14">
+                        <div className="text-center py-12 sm:py-14">
                             <div
                                 className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
                                 style={{ backgroundColor: "#f1f5f9" }}
@@ -302,7 +316,7 @@ export default function ProjectPage() {
                                 <FaCamera className="text-xl" style={{ color: "#94a3b8" }} />
                             </div>
                             <p className="font-bold text-slate-700 mb-1">No photos yet</p>
-                            <p className="text-slate-500 text-sm mb-5">
+                            <p className="text-slate-500 text-sm mb-5 px-4">
                                 Upload before, after, or progress photos for this project.
                             </p>
                             <Link
@@ -313,19 +327,19 @@ export default function ProjectPage() {
                             </Link>
                         </div>
                     ) : (
-                        <div className="space-y-8">
+                        <div className="space-y-6 sm:space-y-8">
                             {PHOTO_SECTIONS.map(({ label, key, badgeClass }) => {
                                 const photos = photoMap[key];
                                 if (!photos.length) return null;
                                 return (
                                     <div key={key}>
-                                        <div className="flex items-center gap-3 mb-4">
+                                        <div className="flex items-center gap-3 mb-3 sm:mb-4">
                                             <span className={`badge ${badgeClass}`}>{label}</span>
                                             <span className="text-xs text-slate-400">
                                                 {photos.length} photo{photos.length !== 1 ? "s" : ""}
                                             </span>
                                         </div>
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
                                             {photos.map((photo) => (
                                                 <div
                                                     key={photo.id}
@@ -353,27 +367,27 @@ export default function ProjectPage() {
             {/* Lightbox */}
             {lightbox && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4"
-                    style={{ backgroundColor: "rgba(0,0,0,0.85)" }}
+                    className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+                    style={{ backgroundColor: "rgba(0,0,0,0.9)" }}
                     onClick={() => setLightbox(null)}
                 >
                     <div
-                        className="relative max-w-3xl w-full"
+                        className="relative w-full max-w-3xl"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <img
                             src={lightbox.imageUrl}
                             alt={lightbox.type}
-                            className="w-full max-h-[80vh] object-contain rounded-2xl"
+                            className="w-full max-h-[85vh] object-contain rounded-xl sm:rounded-2xl"
                         />
                         <button
                             onClick={() => setLightbox(null)}
-                            className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-white transition"
-                            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                            className="absolute top-2 right-2 sm:top-3 sm:right-3 w-9 h-9 rounded-full flex items-center justify-center text-white transition text-lg"
+                            style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
                         >
                             ✕
                         </button>
-                        <div className="absolute bottom-3 left-3">
+                        <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3">
                             <span className={`badge ${lightbox.type === "before" ? "badge-red"
                                     : lightbox.type === "after" ? "badge-green"
                                         : "badge-blue"

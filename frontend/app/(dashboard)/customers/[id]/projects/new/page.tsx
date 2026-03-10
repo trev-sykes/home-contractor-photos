@@ -33,7 +33,7 @@ export default function NewProjectPage() {
 
     return (
         <div className="page">
-            <div className="max-w-lg mx-auto space-y-6">
+            <div className="max-w-lg mx-auto space-y-5 sm:space-y-6">
 
                 {/* Back */}
                 <Link
@@ -47,7 +47,7 @@ export default function NewProjectPage() {
                 {/* Header */}
                 <div>
                     <p className="section-eyebrow">New</p>
-                    <h1 className="font-display text-4xl font-extrabold text-slate-900">
+                    <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-slate-900">
                         Create Project
                     </h1>
                     <p className="text-slate-500 text-sm mt-1">
@@ -76,6 +76,7 @@ export default function NewProjectPage() {
                                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                                 onKeyDown={handleKeyDown}
                                 className="input pl-9"
+                                autoCapitalize="words"
                             />
                         </div>
                     </div>
@@ -94,6 +95,8 @@ export default function NewProjectPage() {
                                 onChange={(e) => setForm({ ...form, address: e.target.value })}
                                 onKeyDown={handleKeyDown}
                                 className="input pl-9"
+                                autoCapitalize="words"
+                                autoComplete="street-address"
                             />
                         </div>
                     </div>

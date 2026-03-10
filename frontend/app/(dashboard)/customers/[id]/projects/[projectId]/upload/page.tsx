@@ -81,7 +81,7 @@ export default function UploadPage() {
 
     return (
         <div className="page">
-            <div className="max-w-3xl mx-auto space-y-6">
+            <div className="max-w-3xl mx-auto space-y-5 sm:space-y-6">
 
                 {/* Back */}
                 <Link
@@ -95,7 +95,7 @@ export default function UploadPage() {
                 {/* Header */}
                 <div>
                     <p className="section-eyebrow">Project</p>
-                    <h1 className="font-display text-4xl font-extrabold text-slate-900">
+                    <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-slate-900">
                         Upload Photos
                     </h1>
                     <p className="text-slate-500 text-sm mt-1">
@@ -103,12 +103,12 @@ export default function UploadPage() {
                     </p>
                 </div>
 
-                <div className="card card-body space-y-6">
+                <div className="card card-body space-y-5 sm:space-y-6">
 
-                    {/* Drop zone */}
+                    {/* Drop zone — shorter on mobile */}
                     <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full rounded-2xl py-14 flex flex-col items-center gap-3 transition group"
+                        className="w-full rounded-2xl py-10 sm:py-14 flex flex-col items-center gap-3 transition"
                         style={{
                             border: "2px dashed #cbd5e1",
                             backgroundColor: "#f8fafc",
@@ -123,16 +123,22 @@ export default function UploadPage() {
                         }}
                     >
                         <div
-                            className="w-14 h-14 rounded-2xl flex items-center justify-center mb-1 transition"
+                            className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center"
                             style={{ backgroundColor: "#f1f5f9" }}
                         >
-                            <FaCamera className="text-2xl" style={{ color: "#94a3b8" }} />
+                            <FaCamera className="text-xl sm:text-2xl" style={{ color: "#94a3b8" }} />
                         </div>
-                        <p className="font-bold text-slate-700">Click to select photos</p>
-                        <p className="text-sm text-slate-400">JPG, PNG, WEBP · Max 10MB each</p>
+                        <div className="text-center px-4">
+                            <p className="font-bold text-slate-700">
+                                {pending.length > 0 ? "Add more photos" : "Tap to select photos"}
+                            </p>
+                            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+                                JPG, PNG, WEBP · Max 10MB each
+                            </p>
+                        </div>
                         {pending.length > 0 && (
                             <span
-                                className="mt-2 flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
+                                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full"
                                 style={{
                                     backgroundColor: "rgba(251,191,36,0.1)",
                                     color: "var(--color-amber-dark)",
@@ -140,7 +146,7 @@ export default function UploadPage() {
                                 }}
                             >
                                 <FaPlus className="text-xs" />
-                                Add more photos
+                                {pending.length} selected
                             </span>
                         )}
                     </button>
@@ -150,6 +156,7 @@ export default function UploadPage() {
                         type="file"
                         accept="image/*"
                         multiple
+                        capture="environment"
                         className="hidden"
                         onChange={handleFileChange}
                     />
@@ -171,18 +178,18 @@ export default function UploadPage() {
                                 </button>
                             </div>
 
-                            <div className="space-y-3">
+                            <div className="space-y-2 sm:space-y-3">
                                 {pending.map((photo, i) => (
                                     <div
                                         key={i}
-                                        className="flex items-center gap-4 rounded-xl p-3"
+                                        className="flex items-center gap-3 rounded-xl p-2.5 sm:p-3"
                                         style={{
                                             backgroundColor: "#f8fafc",
                                             border: "1px solid #e2e8f0",
                                         }}
                                     >
                                         {/* Preview */}
-                                        <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border border-slate-200">
+                                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden flex-shrink-0 border border-slate-200">
                                             <img
                                                 src={photo.preview}
                                                 alt="preview"
@@ -190,17 +197,17 @@ export default function UploadPage() {
                                             />
                                         </div>
 
-                                        {/* Name + type */}
+                                        {/* Name + type toggles */}
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-semibold text-slate-700 truncate mb-2">
+                                            <p className="text-xs sm:text-sm font-semibold text-slate-700 truncate mb-1.5 sm:mb-2">
                                                 {photo.file.name}
                                             </p>
-                                            <div className="flex gap-1.5">
+                                            <div className="flex gap-1 sm:gap-1.5">
                                                 {(["before", "after", "progress"] as PhotoType[]).map((t) => (
                                                     <button
                                                         key={t}
                                                         onClick={() => updateType(i, t)}
-                                                        className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition capitalize ${photo.type === t
+                                                        className={`px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold border transition capitalize ${photo.type === t
                                                                 ? TYPE_STYLES[t].active
                                                                 : TYPE_STYLES[t].inactive
                                                             }`}
@@ -226,7 +233,7 @@ export default function UploadPage() {
                                 ))}
                             </div>
 
-                            {/* Upload progress */}
+                            {/* Progress bar */}
                             {uploading && (
                                 <div className="space-y-2">
                                     <div className="flex justify-between text-xs font-medium text-slate-500">
@@ -247,15 +254,16 @@ export default function UploadPage() {
 
                             {error && <div className="alert-error">{error}</div>}
 
-                            {/* Actions */}
+                            {/* Upload button — full width on mobile */}
                             <div
-                                className="flex gap-3 pt-2"
+                                className="pt-2"
                                 style={{ borderTop: "1px solid #f1f5f9" }}
                             >
                                 <button
                                     onClick={handleUpload}
                                     disabled={uploading}
-                                    className="btn-primary flex items-center gap-2"
+                                    className="btn-primary w-full sm:w-auto flex items-center justify-center gap-2"
+                                    style={{ padding: "0.875rem" }}
                                 >
                                     <FaUpload className="text-xs" />
                                     {uploading

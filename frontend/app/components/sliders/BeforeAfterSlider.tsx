@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface BeforeAfterSliderProps {
     before: string;
@@ -34,24 +34,38 @@ export default function BeforeAfterSlider({
         updatePos(e.clientX);
     };
 
-    const handleTouchStart = () => { isDragging.current = true; };
-    const handleTouchEnd = () => { isDragging.current = false; };
-    const handleTouchMove = (e: React.TouchEvent) => {
-        updatePos(e.touches[0].clientX);
-    };
+    // Attach touch listeners natively with passive: false so preventDefault works
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+
+        const onTouchStart = () => { isDragging.current = true; };
+        const onTouchEnd = () => { isDragging.current = false; };
+        const onTouchMove = (e: TouchEvent) => {
+            e.preventDefault();
+            updatePos(e.touches[0].clientX);
+        };
+
+        el.addEventListener("touchstart", onTouchStart, { passive: true });
+        el.addEventListener("touchend", onTouchEnd, { passive: true });
+        el.addEventListener("touchmove", onTouchMove, { passive: false });
+
+        return () => {
+            el.removeEventListener("touchstart", onTouchStart);
+            el.removeEventListener("touchend", onTouchEnd);
+            el.removeEventListener("touchmove", onTouchMove);
+        };
+    }, []);
 
     return (
         <div
             ref={containerRef}
             className="relative select-none overflow-hidden rounded-xl cursor-col-resize"
-            style={{ width, height, display: "block", flexShrink: 0 }}
+            style={{ width, height, display: "block", flexShrink: 0, touchAction: "none" }}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
             onMouseMove={handleMouseMove}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-            onTouchMove={handleTouchMove}
         >
             {/* Before image */}
             <img
@@ -88,7 +102,7 @@ export default function BeforeAfterSlider({
 
             {/* Slider handle */}
             <div
-                className="absolute w-8 h-8 bg-white rounded-full shadow-lg pointer-events-none flex items-center justify-center"
+                className="absolute w-10 h-10 sm:w-8 sm:h-8 bg-white rounded-full shadow-lg pointer-events-none flex items-center justify-center"
                 style={{ top: "50%", left: `${sliderPos}%`, transform: "translate(-50%, -50%)" }}
             >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

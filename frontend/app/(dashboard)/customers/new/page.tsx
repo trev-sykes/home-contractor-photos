@@ -33,7 +33,7 @@ export default function NewCustomerPage() {
 
     return (
         <div className="page">
-            <div className="max-w-lg mx-auto space-y-6">
+            <div className="max-w-lg mx-auto space-y-5 sm:space-y-6">
 
                 {/* Back */}
                 <Link
@@ -47,7 +47,7 @@ export default function NewCustomerPage() {
                 {/* Header */}
                 <div>
                     <p className="section-eyebrow">New</p>
-                    <h1 className="font-display text-4xl font-extrabold text-slate-900">
+                    <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-slate-900">
                         Add Customer
                     </h1>
                     <p className="text-slate-500 text-sm mt-1">
@@ -76,6 +76,8 @@ export default function NewCustomerPage() {
                                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                                 onKeyDown={handleKeyDown}
                                 className="input pl-9"
+                                autoCapitalize="words"
+                                autoComplete="name"
                             />
                         </div>
                     </div>
@@ -94,6 +96,8 @@ export default function NewCustomerPage() {
                                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                                 onKeyDown={handleKeyDown}
                                 className="input pl-9"
+                                autoCapitalize="none"
+                                autoComplete="email"
                             />
                         </div>
                     </div>
@@ -112,11 +116,12 @@ export default function NewCustomerPage() {
                                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
                                 onKeyDown={handleKeyDown}
                                 className="input pl-9"
+                                autoComplete="tel"
+                                inputMode="tel"
                             />
                         </div>
                     </div>
 
-                    {/* Divider */}
                     <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "0.5rem" }}>
                         <button
                             onClick={handleSubmit}
