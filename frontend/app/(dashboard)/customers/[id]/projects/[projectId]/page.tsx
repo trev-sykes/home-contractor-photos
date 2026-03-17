@@ -56,11 +56,27 @@ export default function ProjectPage() {
         try {
             const res = await api.get(`/api/customers/${id}/projects/${projectId}/share-token`);
             const url = `${window.location.origin}/share/${res.data.token}`;
-            await navigator.clipboard.writeText(url);
-            setShareCopied(true);
-            setTimeout(() => setShareCopied(false), 3000);
-        } catch {
-            console.error("Failed to get share link");
+
+            // Use native share sheet on mobile if available
+            if (navigator.share) {
+                await navigator.share({
+                    title: project?.name ?? "Project Photos",
+                    text: "View my project photos",
+                    url,
+                });
+                setShareCopied(true);
+                setTimeout(() => setShareCopied(false), 3000);
+            } else {
+                // Fallback to clipboard on desktop
+                await navigator.clipboard.writeText(url);
+                setShareCopied(true);
+                setTimeout(() => setShareCopied(false), 3000);
+            }
+        } catch (err: any) {
+            // User cancelled the share sheet — not an error
+            if (err?.name !== "AbortError") {
+                console.error("Failed to share", err);
+            }
         } finally {
             setShareLoading(false);
         }
@@ -389,8 +405,8 @@ export default function ProjectPage() {
                         </button>
                         <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3">
                             <span className={`badge ${lightbox.type === "before" ? "badge-red"
-                                    : lightbox.type === "after" ? "badge-green"
-                                        : "badge-blue"
+                                : lightbox.type === "after" ? "badge-green"
+                                    : "badge-blue"
                                 } capitalize`}>
                                 {lightbox.type}
                             </span>
