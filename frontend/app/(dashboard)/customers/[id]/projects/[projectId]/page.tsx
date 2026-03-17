@@ -57,31 +57,30 @@ export default function ProjectPage() {
             const res = await api.get(`/api/customers/${id}/projects/${projectId}/share-token`);
             const url = `${window.location.origin}/share/${res.data.token}`;
 
-            // Use native share sheet on mobile if available
-            if (navigator.share) {
-                await navigator.share({
-                    title: project?.name ?? "Project Photos",
-                    text: "View my project photos",
-                    url,
-                });
-                setShareCopied(true);
-                setTimeout(() => setShareCopied(false), 3000);
-            } else {
-                // Fallback to clipboard on desktop
+            // Try modern clipboard API first
+            if (navigator.clipboard && window.isSecureContext) {
                 await navigator.clipboard.writeText(url);
-                setShareCopied(true);
-                setTimeout(() => setShareCopied(false), 3000);
+            } else {
+                // Fallback for mobile browsers that block clipboard API
+                const textarea = document.createElement("textarea");
+                textarea.value = url;
+                textarea.style.position = "fixed";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
             }
-        } catch (err: any) {
-            // User cancelled the share sheet — not an error
-            if (err?.name !== "AbortError") {
-                console.error("Failed to share", err);
-            }
+
+            setShareCopied(true);
+            setTimeout(() => setShareCopied(false), 3000);
+        } catch {
+            console.error("Failed to copy share link");
         } finally {
             setShareLoading(false);
         }
     };
-
     useEffect(() => {
         api.get(`/api/customers/${id}/projects/${projectId}`)
             .then((res) => {
