@@ -42,3 +42,19 @@ export const addCustomer = async (
         data: { ...data, userId },
     });
 };
+export const editCustomer = async (
+    userId: string,
+    customerId: string,
+    data: { name: string; email?: string; phone?: string }
+) => {
+    return await prisma.customer.updateMany({
+        where: { id: customerId, userId },
+        data,
+    });
+};
+
+export const removeCustomer = async (userId: string, customerId: string) => {
+    return await prisma.customer.deleteMany({
+        where: { id: customerId, userId },
+    });
+};

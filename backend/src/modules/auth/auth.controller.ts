@@ -33,8 +33,8 @@ export const registerController = async (req: Request, res: Response) => {
             companyName: user.companyName,
             stripeCustomerId: customer.id,
         });
-    } catch (err) {
-        console.error(err);
-        res.status(400).json({ error: "Email already exists or other error" });
+    } catch (err: any) {
+        console.error("REGISTER CONTROLLER ERROR:", err);
+        res.status(400).json({ error: err.message }); // 👈 return the real message
     }
 }
