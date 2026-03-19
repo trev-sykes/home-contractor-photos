@@ -439,3 +439,9 @@
         box-shadow: 0 0 40px rgba(251, 191, 36, 0.15);
     }
 }
+
+input,
+textarea,
+select {
+    font-size: 16px !important;
+}
