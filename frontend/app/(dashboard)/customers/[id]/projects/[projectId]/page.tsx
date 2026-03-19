@@ -55,32 +55,74 @@ export default function ProjectPage() {
         setShareLoading(true);
         try {
             const res = await api.get(`/api/customers/${id}/projects/${projectId}/share-token`);
-            const url = `${window.location.origin}/share/${res.data.token}`;
+            const shareUrl = `${window.location.origin}/share/${res.data.token}`;
 
-            // Try modern clipboard API first
-            if (navigator.clipboard && window.isSecureContext) {
-                await navigator.clipboard.writeText(url);
-            } else {
-                // Fallback for mobile browsers that block clipboard API
-                const textarea = document.createElement("textarea");
-                textarea.value = url;
-                textarea.style.position = "fixed";
-                textarea.style.opacity = "0";
-                document.body.appendChild(textarea);
-                textarea.focus();
-                textarea.select();
-                document.execCommand("copy");
+            // Try native share API first (works best on mobile)
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: `${project?.name || 'Project'} - Gallery`,
+                        text: 'Check out this project gallery',
+                        url: shareUrl,
+                    });
+                    setShareCopied(true);
+                    setTimeout(() => setShareCopied(false), 3000);
+                    return;
+                } catch (shareError) {
+                    // User cancelled share, fall through to clipboard
+                    if (shareError instanceof Error && shareError.name !== 'AbortError') {
+                        console.log('Share failed, trying clipboard');
+                    }
+                }
+            }
+
+            // Fallback: Try modern clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(shareUrl);
+                    setShareCopied(true);
+                    setTimeout(() => setShareCopied(false), 3000);
+                    return;
+                } catch (clipError) {
+                    console.log('Clipboard API failed, trying fallback');
+                }
+            }
+
+            // Last resort: Old-school copy method
+            const textarea = document.createElement("textarea");
+            textarea.value = shareUrl;
+            textarea.style.position = "fixed";
+            textarea.style.left = "-9999px";
+            textarea.style.top = "0";
+            document.body.appendChild(textarea);
+
+            textarea.focus();
+            textarea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    setShareCopied(true);
+                    setTimeout(() => setShareCopied(false), 3000);
+                } else {
+                    // If all else fails, show an alert with the URL
+                    alert(`Copy this link:\n\n${shareUrl}`);
+                }
+            } catch (err) {
+                // Absolute last resort
+                alert(`Copy this link:\n\n${shareUrl}`);
+            } finally {
                 document.body.removeChild(textarea);
             }
 
-            setShareCopied(true);
-            setTimeout(() => setShareCopied(false), 3000);
-        } catch {
-            console.error("Failed to copy share link");
+        } catch (error) {
+            console.error("Failed to generate share link:", error);
+            alert("Failed to generate share link. Please try again.");
         } finally {
             setShareLoading(false);
         }
     };
+
     useEffect(() => {
         api.get(`/api/customers/${id}/projects/${projectId}`)
             .then((res) => {
