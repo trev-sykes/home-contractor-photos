@@ -57,26 +57,7 @@ export default function ProjectPage() {
             const res = await api.get(`/api/customers/${id}/projects/${projectId}/share-token`);
             const shareUrl = `${window.location.origin}/share/${res.data.token}`;
 
-            // Try native share API first (works best on mobile)
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: `${project?.name || 'Project'} - Gallery`,
-                        text: 'Check out this project gallery',
-                        url: shareUrl,
-                    });
-                    setShareCopied(true);
-                    setTimeout(() => setShareCopied(false), 3000);
-                    return;
-                } catch (shareError) {
-                    // User cancelled share, fall through to clipboard
-                    if (shareError instanceof Error && shareError.name !== 'AbortError') {
-                        console.log('Share failed, trying clipboard');
-                    }
-                }
-            }
-
-            // Fallback: Try modern clipboard API
+            // Try modern clipboard API FIRST
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 try {
                     await navigator.clipboard.writeText(shareUrl);
@@ -84,7 +65,23 @@ export default function ProjectPage() {
                     setTimeout(() => setShareCopied(false), 3000);
                     return;
                 } catch (clipError) {
-                    console.log('Clipboard API failed, trying fallback');
+                    console.log('Clipboard API failed, trying native share');
+                }
+            }
+
+            // Fallback: Try native share API (mobile)
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        url: shareUrl, // Only URL, no title or text
+                    });
+                    setShareCopied(true);
+                    setTimeout(() => setShareCopied(false), 3000);
+                    return;
+                } catch (shareError) {
+                    if (shareError instanceof Error && shareError.name !== 'AbortError') {
+                        console.log('Share failed, trying fallback');
+                    }
                 }
             }
 
@@ -105,11 +102,9 @@ export default function ProjectPage() {
                     setShareCopied(true);
                     setTimeout(() => setShareCopied(false), 3000);
                 } else {
-                    // If all else fails, show an alert with the URL
                     alert(`Copy this link:\n\n${shareUrl}`);
                 }
             } catch (err) {
-                // Absolute last resort
                 alert(`Copy this link:\n\n${shareUrl}`);
             } finally {
                 document.body.removeChild(textarea);
@@ -122,7 +117,6 @@ export default function ProjectPage() {
             setShareLoading(false);
         }
     };
-
     useEffect(() => {
         api.get(`/api/customers/${id}/projects/${projectId}`)
             .then((res) => {
