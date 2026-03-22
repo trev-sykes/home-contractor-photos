@@ -156,7 +156,6 @@ export default function UploadPage() {
                         type="file"
                         accept="image/*"
                         multiple
-                        capture="environment"
                         className="hidden"
                         onChange={handleFileChange}
                     />
@@ -208,8 +207,8 @@ export default function UploadPage() {
                                                         key={t}
                                                         onClick={() => updateType(i, t)}
                                                         className={`px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold border transition capitalize ${photo.type === t
-                                                                ? TYPE_STYLES[t].active
-                                                                : TYPE_STYLES[t].inactive
+                                                            ? TYPE_STYLES[t].active
+                                                            : TYPE_STYLES[t].inactive
                                                             }`}
                                                     >
                                                         {t}
